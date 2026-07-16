@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from datetime import datetime
+from database import supabase
 
 router = APIRouter()
 
@@ -115,6 +116,23 @@ def estimate_batch(req: EstimateRequest):
       recs.append("Keep drying duration within 5 to 14 days under alternating sun and shade.")
     if conditioning_score < 2:
       recs.append("Condition in sealed container boxes for at least 60 days before selling.")
+      
+    try:
+      supabase.table("vanilla_batches").insert({
+          "farmer_name": req.farmer_name,
+          "location_region": req.location_region,
+          "pollination_date": req.pollination_date,
+          "curing_method": req.curing_method,
+          "sweating_duration_days": req.sweating_duration_days,
+          "sun_drying_duration_days": req.sun_drying_duration_days,
+          "conditioning_duration_days": req.conditioning_duration_days,
+          "predicted_grade": predicted_grade,
+          "confidence_score": float(round(confidence, 2)),
+          "quantity_kg_wet": req.quantity_kg_wet,
+          "quantity_kg_dry_estimate": dry_qty
+      }).execute()
+    except Exception as e:
+      print("Supabase insert error:", str(e))
       
     return EstimateResponse(
         harvest_status=harvest_status,

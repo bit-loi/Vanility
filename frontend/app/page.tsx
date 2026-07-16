@@ -76,7 +76,7 @@ export default function Home() {
   const avgGrade = batches.filter(b => b.grade === 'Grade A').length >= batches.filter(b => b.grade === 'Grade B').length ? 'Grade A' : 'Grade B';
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#F5EFE6] font-sans text-[#2C1E15]">
+    <div className="flex h-screen w-screen overflow-hidden bg-cream-base font-sans text-primary-ink">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
       
       <div className="flex-1 flex flex-col overflow-hidden">

@@ -6,14 +6,14 @@
   --color-primary-ink: #3b2313;
   --color-accent-gold: #75662c;
   --color-accent-bronze: #a88256;
-  --color-cream-base: #efeee7;
+  --color-cream-base: #ffffff;
   --color-card-cream: #fbf7ee;
   --color-hero-olive: #393308;
   --color-text-dark: #111827;
 }
 
 :root {
-  --background: #efeee7;
+  --background: #ffffff;
   --foreground: #3b2313;
 }
 
