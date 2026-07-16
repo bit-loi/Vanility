@@ -132,16 +132,18 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen w-screen bg-cream-base font-sans text-primary-ink flex flex-col justify-between">
-      <header className="border-b-2 border-primary-ink px-6 py-4 flex justify-between items-center bg-card-cream">
-        <div className="flex items-center">
+      <header className="border-b-2 border-primary-ink px-6 py-4 flex justify-between items-center bg-card-cream w-full">
+        <div className="flex items-center pl-8 md:pl-12">
           <img src="/Logo_Vanility.png" className="w-10 h-auto object-contain" alt="Logo" />
         </div>
-        <button
-          onClick={() => router.push('/dashboard')}
-          className="px-4 py-2 border-2 border-primary-ink bg-white font-bold text-xs rounded-lg shadow-[2px_2px_0_0_#3b2313] hover:bg-cream-base active:translate-y-0.5 active:shadow-none transition-all"
-        >
-          {t.backToDashboard}
-        </button>
+        <div className="flex items-center pr-8 md:pr-12">
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="px-4 py-2 border-2 border-primary-ink bg-white font-bold text-xs rounded-lg shadow-[2px_2px_0_0_#3b2313] hover:bg-cream-base active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+          >
+            {t.backToDashboard}
+          </button>
+        </div>
       </header>
 
       <main className="flex-1 flex flex-col items-center justify-center p-6 max-w-lg mx-auto w-full">

@@ -39,13 +39,15 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-screen w-screen flex flex-col justify-center items-center p-6 min-h-screen bg-cream-base font-sans text-primary-ink relative">
-      <button
-        onClick={() => router.push('/login')}
-        className="absolute top-6 left-6 flex items-center gap-1.5 px-3 py-1.5 border-2 border-primary-ink bg-white font-bold text-xs rounded-lg shadow-[2px_2px_0_0_#3b2313] hover:bg-cream-base active:translate-y-0.5 active:shadow-none transition-all"
-      >
-        &larr; Back to Login
-      </button>
+    <div className="min-h-screen w-screen flex flex-col justify-center items-center p-4 md:p-6 bg-cream-base font-sans text-primary-ink relative">
+      <div className="w-full max-w-md flex justify-start mb-4">
+        <button
+          onClick={() => router.push('/login')}
+          className="flex items-center gap-1.5 px-3 py-1.5 border-2 border-primary-ink bg-white font-bold text-xs rounded-lg shadow-[2px_2px_0_0_#3b2313] hover:bg-cream-base active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+        >
+          &larr; Back to Login
+        </button>
+      </div>
 
       <div className="relative w-full max-w-md border-2 border-primary-ink bg-card-cream p-8 rounded-2xl shadow-[4px_4px_0_0_#3b2313] md:p-10">
         <span className="absolute -top-1.5 -left-1.5 text-xs text-primary-ink font-mono leading-none font-bold">+</span>

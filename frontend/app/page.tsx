@@ -19,7 +19,7 @@ const translations = {
     features: {
       grading: {
         title: 'Grade Assessment',
-        desc: 'Estimate harvest maturity and bean grade from pollination logs and curing durations — powered by SNI-standard rules and a trained ML model.'
+        desc: 'Estimate harvest maturity and bean grade from pollination logs and curing durations powered by SNI-standard rules and a trained ML model.'
       },
       calculator: {
         title: 'Value Calculator',

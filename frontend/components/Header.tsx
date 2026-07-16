@@ -9,6 +9,7 @@ interface HeaderProps {
   timeStr: string;
   lang: 'en' | 'id';
   onToggleLang: () => void;
+  onToggleSidebar?: () => void;
 }
 
 const headerTranslations = {
@@ -26,7 +27,7 @@ const headerTranslations = {
   }
 };
 
-export default function Header({ activeTab, timeStr, lang, onToggleLang }: HeaderProps) {
+export default function Header({ activeTab, timeStr, lang, onToggleLang, onToggleSidebar }: HeaderProps) {
   const router = useRouter();
   const supabase = createClient();
   const [avatarUrl, setAvatarUrl] = useState('');
@@ -57,14 +58,24 @@ export default function Header({ activeTab, timeStr, lang, onToggleLang }: Heade
   const initial = displayName.charAt(0).toUpperCase();
 
   return (
-    <header className="h-16 border-b border-primary-ink bg-card-cream px-8 flex items-center justify-between">
-      <h1 className="font-sans font-light text-2xl tracking-tight text-text-dark leading-none">
-        {headerTranslations[lang][activeTab]}
-      </h1>
+    <header className="h-16 border-b border-primary-ink bg-card-cream px-4 md:px-8 flex items-center justify-between">
+      <div className="flex items-center space-x-3">
+        {/* Hamburger Button on Mobile */}
+        <button
+          onClick={onToggleSidebar}
+          className="md:hidden p-2 border-2 border-primary-ink bg-white rounded-lg shadow-[1px_1px_0_0_#3b2313] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer text-primary-ink flex items-center justify-center"
+          aria-label="Toggle Sidebar"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <h1 className="font-sans font-light text-lg md:text-2xl tracking-tight text-text-dark leading-none truncate max-w-[160px] sm:max-w-none">
+          {headerTranslations[lang][activeTab]}
+        </h1>
+      </div>
 
       <div className="flex items-center space-x-4 text-xs font-bold text-primary-ink">
-
-
         <button
           onClick={onToggleLang}
           className="flex items-center px-3 py-1.5 rounded-lg border-2 border-primary-ink bg-card-cream shadow-[1px_1px_0_0_#3b2313] hover:bg-cream-base active:translate-y-0.5 active:shadow-none transition-all cursor-pointer font-retro text-[8px]"

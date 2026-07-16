@@ -23,6 +23,7 @@ export default function DashboardPage() {
   const [profileName, setProfileName] = useState('');
   
   const [batches, setBatches] = useState<Batch[]>([]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const loadBatches = async () => {
     try {
@@ -170,6 +171,8 @@ export default function DashboardPage() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         lang={lang}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
       />
       
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -178,9 +181,10 @@ export default function DashboardPage() {
           timeStr={timeStr}
           lang={lang}
           onToggleLang={handleToggleLang}
+          onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}
         />
         
-        <main className="flex-1 overflow-y-auto p-8">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8">
           {activeTab === 'overview' && (
             <OverviewTab
               batches={batches}

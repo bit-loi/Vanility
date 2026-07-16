@@ -50,7 +50,7 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-screen w-screen flex flex-col justify-center items-center p-6 min-h-screen bg-cream-base font-sans text-primary-ink relative">
+    <div className="min-h-screen w-screen flex flex-col justify-center items-center p-4 md:p-6 bg-cream-base font-sans text-primary-ink relative">
       <div className="relative w-full max-w-md border-2 border-primary-ink bg-card-cream p-8 rounded-2xl shadow-[4px_4px_0_0_#3b2313] md:p-10">
         <span className="absolute -top-1.5 -left-1.5 text-xs text-primary-ink font-mono leading-none font-bold">+</span>
         <span className="absolute -top-1.5 -right-1.5 text-xs text-primary-ink font-mono leading-none font-bold">+</span>
