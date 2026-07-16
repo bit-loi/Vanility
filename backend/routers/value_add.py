@@ -1,17 +1,7 @@
 from fastapi import APIRouter
-from pydantic import BaseModel
+from models.schemas import ValueAddRequest, ValueAddResponse
 
 router = APIRouter()
-
-class ValueAddRequest(BaseModel):
-    quantity_kg_dry: float
-    predicted_grade: str
-
-class ValueAddResponse(BaseModel):
-    raw_bean_income_usd: float
-    extract_income_usd: float
-    value_add_gap_usd: float
-    value_add_gap_percentage: float
 
 @router.post("/value-add-calculator", response_model=ValueAddResponse)
 def calculate_value_add(req: ValueAddRequest):

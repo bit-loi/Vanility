@@ -1,12 +1,7 @@
 from fastapi import APIRouter
-from pydantic import BaseModel
+from models.schemas import PriceReferenceItem
 
 router = APIRouter()
-
-class PriceReferenceItem(BaseModel):
-    grade: str
-    price_usd_per_kg_min: float
-    price_usd_per_kg_max: float
 
 @router.get("/price-reference", response_model=list[PriceReferenceItem])
 def get_price_references():

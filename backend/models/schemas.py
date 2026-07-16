@@ -1,0 +1,35 @@
+from pydantic import BaseModel
+
+class EstimateRequest(BaseModel):
+    farmer_name: str
+    location_region: str
+    pollination_date: str
+    curing_method: str
+    sweating_duration_days: int
+    sun_drying_duration_days: int
+    conditioning_duration_days: int
+    quantity_kg_wet: float
+
+class EstimateResponse(BaseModel):
+    harvest_status: str
+    predicted_grade: str
+    confidence_score: float
+    recommendations: list[str]
+    quantity_kg_dry_estimate: float
+    estimated_price_usd_per_kg_min: float
+    estimated_price_usd_per_kg_max: float
+
+class ValueAddRequest(BaseModel):
+    quantity_kg_dry: float
+    predicted_grade: str
+
+class ValueAddResponse(BaseModel):
+    raw_bean_income_usd: float
+    extract_income_usd: float
+    value_add_gap_usd: float
+    value_add_gap_percentage: float
+
+class PriceReferenceItem(BaseModel):
+    grade: str
+    price_usd_per_kg_min: float
+    price_usd_per_kg_max: float
