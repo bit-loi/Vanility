@@ -1,211 +1,323 @@
 # Vanility
 
-**Decision Support System for Indonesian Vanilla Farmers**  
-*Garuda Hacks 7.0 — July 2026*
+Vanility is a platform that helps Indonesian vanilla farmers produce export grade vanilla and connect directly with global buyers. The goal is simple: help farmers earn more by skipping middlemen and selling premium cured vanilla at fair prices.
+
+Garuda Hacks 7.0 July 2026
 
 ---
 
-## Pitch & Positioning
+## Why Vanility Exists
 
-**Vanility is not an "AI that predicts your grade."** It is a **structured decision support system** that codifies the Indonesian National Standard (SNI) for vanilla grading and fragmentary academic research from IPB University into a unified, machine-trained model — accessible to farmers without a laboratory.
+Indonesia is the world's second largest vanilla producer, supplying roughly 30 percent of global vanilla. But Indonesia ranks only seventh in export value. Farmers sell raw beans to local middlemen at low prices while international buyers pay premium rates for Grade A cured vanilla.
 
-### Why this matters
+The reasons are clear:
 
-Indonesia is the world's **second-largest vanilla producer** (~30% of global supply), yet ranks only **seventh in export value**. The core problem is not a lack of production — it is a **knowledge and transparency gap** in harvest timing and post-harvest curing.
+* Farmers harvest early, around 3 to 4 months instead of the ideal 8 to 9 months, because of financial pressure and theft risk.
+* Curing steps like sweating, drying, and conditioning are done inconsistently because the relationship between each step and final bean quality has never been compiled into an accessible tool.
+* Farmers have no direct connection to international buyers. They sell to whoever shows up at the village gate.
 
-Most farmers harvest early (3–4 months instead of the ideal 8–9 months) due to financial pressure and theft risk. Curing steps — sweating, drying, conditioning — are performed inconsistently because the relationship between each step's duration and final bean quality has never been compiled into an accessible tool.
-
-Vanility translates these standards into a simple digital interface, allowing farmers and cooperative leaders to:
-
-1. Estimate harvest maturity and final bean grade from basic production metadata.
-2. Follow step-by-step curing guidelines aligned with SNI export standards.
-3. Compare projected income from selling raw beans versus processed extracts.
+Vanility closes these gaps.
 
 ---
 
-## Methodology: How the Grading Engine Works
+## What You Can Do With Vanility
 
-### Current implementation (v1.0)
+### For Farmers and Cooperatives
 
-The grading engine combines **two approaches**:
+**Grade Assessment**
+Enter your pollination date, region, curing method, and step durations. Vanility returns your predicted grade, confidence score, estimated dry yield, and market price range. You know what your beans are worth before you sell.
 
-| Component | Description |
-|-----------|-------------|
-| **SNI/IPB Rule Engine** | A structured scoring system derived from SNI 01-0012-2015 and published IPB curing research. Scores harvest timing, sweating duration, drying duration, and conditioning duration against documented optimal ranges. |
-| **Trained ML Model** (Random Forest) | A scikit-learn model trained on synthetically generated data that follows the same SNI distributions. This model generalizes beyond rigid rule boundaries, providing smooth confidence estimates across the parameter space. |
+**Curing Guidance**
+Follow an interactive checklist aligned with SNI 01 0012 2015 export standards. The checklist walks you through blanching, sweating, sun drying, and conditioning. Complete all steps and your batch qualifies as Export Ready.
 
-**→ Important: The initial model is trained on synthetic data because real field data from Indonesian smallholder farmers is not yet available at scale.** Building trust with farming communities to share harvest records takes time and on-the-ground partnerships. Our roadmap (see below) prioritizes replacing this with real field data once collaborations with BRIN (National Research and Innovation Agency) and local cooperatives are established.
+**Value Add Calculator**
+Compare your income from selling dried beans versus processing them into vanilla extract. See the dollar difference and decide whether curing investment is worth it.
 
-### Future — Computer Vision from Bean Photos (Roadmap)
+**Batch Management**
+Save every batch you assess to your personal dashboard. Track grade distribution, wet and dry quantities, and curing status across all your batches over time.
 
-One of the strongest opportunities for genuine predictive ML lies in **visual analysis of vanilla pods**. Bean color and surface texture correlate strongly with maturity and curing stage. The plan is:
+**Seller Mode Matching**
+Mark your batch as Export Ready and the matching engine will score it against every active buyer in the pool. The scoring uses four factors:
 
-1. Collect 30–50+ public-domain vanilla pod images from academic journals and open datasets.
-2. Build a simple computer vision pipeline (color histogram + texture thresholding) that outputs a maturity signal alongside the metadata-based model.
-3. Eventually replace or ensemble the rule/ML engine with a CNN trained on a larger curated dataset.
+* Grade compatibility: exact match scores 40 points, adjacent grade scores 15 points
+* Quantity fit: 30 points if your batch quantity falls within the buyer's range
+* Origin preference: 20 points if your region matches what the buyer wants
+* Industry alignment: 10 points if your grade fits the buyer's industry
 
-**This visual component is not yet implemented** and is listed as a roadmap milestone.
+The top three buyer matches are shown with their compatibility score and a plain language explanation from the LLM Export Advisor.
+
+**Contact Requests**
+When buyers want your batch, they send a purchase request through the platform. You get notified and can follow up directly.
+
+### For Buyers and Exporters
+
+**Product Marketplace**
+Browse all Export Ready farmer batches in one grid view. See each batch's grade, quantity (wet and dry), origin region, and farmer name.
+
+**Batch Purchase Requests**
+Found a batch you want? Click Request to Purchase and the farmer receives your interest. No middlemen, no cold calls.
+
+**Purchase History**
+Track all your initiated deals from a single dashboard. See which batches you have requested and their current status.
+
+**Buyer Mode Activation**
+Set your buying criteria including required grade, quantity range, preferred origin, and industry profile. When you activate Buyer Mode, you appear in the live buyer pool and farmers can match their batches against your criteria.
 
 ---
 
-## Core Features
+## How the Grading Engine Works
 
-### 1. Maturity & Grade Assessment
-Farmers input pollination date, region, curing method, and step durations. The system returns:
-- Harvest status (Too Early / Approaching Maturity / Ideal Maturity / Overmature)
-- Predicted grade (Grade A / Grade B / Low Grade) with confidence score
-- Actionable recommendations for improving quality
-- Estimated dry yield and market price range (USD/kg)
+The grading engine combines two approaches:
 
-### 2. Value Addition Calculator
-Compares estimated income from selling dried beans vs. processing into vanilla extract. Visualizes the income gap to motivate curing investment.
+* SNI Rule Engine: a structured scoring system derived from SNI 01 0012 2015 and published IPB University research on vanilla curing. It evaluates harvest timing, sweating duration, sun drying duration, and conditioning duration against documented optimal ranges.
+* Machine Learning Model: a scikit learn Random Forest trained on data that follows the same SNI distributions. It smooths out rigid rule boundaries and provides confidence estimates across the full parameter space.
 
-### 3. Curing Guidance Checklist
-Interactive checklist that walks through all four post-harvest stages:
-- **Blanching** (63–65°C, 2–3 minutes)
-- **Sweating** (10–15 days traditional, 4–8 days controlled)
-- **Sun drying** (5–14 days)
-- **Conditioning** (60–90 days for aroma maturation)
+The model was initially trained on synthetic data because real field data from Indonesian smallholder farmers is not yet available at scale. The roadmap includes replacing this with real data as partnerships with cooperatives and research institutions grow.
 
-Aligned with SNI 01-0012-2015 export standards.
+---
+
+## Features List
+
+**Core Features**
+
+* Grade prediction with confidence score and recommendations
+* Dry yield estimation and price range (USD per kg)
+* Interactive curing checklist aligned with SNI standards
+* Value add calculator comparing raw bean versus extract income
+* Save and track multiple batches on your dashboard
+* Overview dashboard with KPI cards and grade distribution chart
+* LLM powered market insights on the overview page
+
+**Matching and Marketplace**
+
+* Seller mode: match your export ready batch with active buyers
+* Buyer mode: activate with custom criteria and appear in the live buyer pool
+* Product marketplace grid for buyers to browse all available batches
+* Contact request system for direct buyer seller connection
+* Live buyer presence with 30 second heartbeat
+* LLM Export Advisor generating plain language match explanations in English or Indonesian
+
+**Platform**
+
+* Bilingual interface: full English and Indonesian
+* Authentication via Supabase with email/password and Google OAuth
+* Two user types: Individual Farmer and Cooperative
+* Profile settings page with location and user type configuration
+* Forgot password and reset password flow
+* Retro inspired UI with custom theming
 
 ---
 
 ## Architecture
 
+The project has two main components:
+
+**Frontend (Next.js 16 + React 19 + Tailwind CSS 4)**
+
 ```
-┌─────────────────────────────────────────────────────┐
-│                    Frontend (Next.js)               │
-│  Landing → Login → Dashboard                       │
-│    ├─ Overview Tab (batch table, KPIs, alerts)      │
-│    ├─ Grade Assessment Tab (input form + results)   │
-│    ├─ Value Add Calculator Tab                      │
-│    └─ Curing Guidance Tab (checklist)               │
-└──────────────────────┬──────────────────────────────┘
-                       │ HTTP (REST)
-┌──────────────────────▼──────────────────────────────┐
-│                Backend (FastAPI)                    │
-│  routers/                                           │
-│    ├─ estimate.py     → grading engine              │
-│    ├─ value_add.py    → financial calculator         │
-│    └─ price_reference.py → market data              │
-│  logic/                                             │
-│    └─ grading.py      → rule engine + ML model      │
-│  repository.py        → Supabase persistence        │
-└──────────────────────┬──────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────┐
-│              Database (Supabase)                    │
-│  vanilla_batches table                              │
-│    farmer_name, region, pollination_date,           │
-│    curing_metrics, predicted_grade, confidence,     │
-│    wet/dry quantity, created_at                     │
-└─────────────────────────────────────────────────────┘
+frontend/
+  app/
+    page.tsx              landing page
+    login/page.tsx        authentication
+    dashboard/page.tsx    main dashboard with sidebar and tabs
+    profile/page.tsx      user profile settings
+    forgot-password/
+    reset-password/
+  components/
+    OverviewTab.tsx       KPI cards, batch table, grade charts
+    EstimatorTab.tsx      grade assessment form and results
+    CalculatorTab.tsx     value add financial calculator
+    GuidanceTab.tsx       curing checklist
+    MatchingTab.tsx       buyer matching and product marketplace
+    Sidebar.tsx           navigation sidebar
+    Header.tsx            top header bar
+  lib/api.ts              API client functions
+  utils/supabase/         Supabase client and server helpers
 ```
 
-### Tech Stack
+**Backend (Python 3.11+ FastAPI)**
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | Next.js 16, React 19, Tailwind CSS 4, SweetAlert2 |
-| Backend | Python 3.11+, FastAPI, Uvicorn |
-| ML | scikit-learn (Random Forest), joblib, pandas |
-| Database | Supabase (PostgreSQL via REST API) |
-| Auth | Supabase Auth (email/password, OAuth) |
+```
+backend/
+  routers/
+    estimate.py           grade estimation endpoint
+    buyer_mode.py         buyer seller mode, matching, contact requests
+    value_add.py          financial calculator endpoint
+    price_reference.py    market price data endpoint
+    buyer_match.py        legacy matching route
+  logic/
+    grading.py            SNI rule engine and ML model
+    matching.py           buyer scoring engine
+  models/schemas.py       Pydantic request and response models
+  repository.py           Supabase persistence layer
+  database.py             REST API client for Supabase
+  auth.py                 JWT token validation
+  main.py                 FastAPI application entry point
+```
+
+**Database (Supabase PostgreSQL)**
+
+Key tables:
+* batches: vanilla batch records with grade, quantity, origin, status
+* profiles: user profile information
+* buyer_mode_state: active buyer criteria and presence tracking
+* contact_requests: buyer initiated purchase requests
 
 ---
 
 ## Setup Instructions
 
-### Prerequisites
+**Prerequisites**
 
-- **Node.js** >= 22 (for frontend)
-- **Python** >= 3.11 (for backend)
-- **A Supabase account** (free tier works)
+* Node.js version 22 or higher
+* Python version 3.11 or higher
+* A Supabase account (free tier is sufficient)
 
----
-
-### 1. Clone and install frontend dependencies
-
-```bash
-git clone https://github.com/your-org/vanility.git
-cd vanility/frontend
-npm install
-```
-
-### 2. Clone and install backend dependencies
-
-```bash
-cd ../backend
-python -m venv venv
-source venv/bin/activate   # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-### 3. Configure environment variables
-
-Create a `.env` file in the `backend/` directory:
-
-```env
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_KEY=your-supabase-anon-key
-ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
-```
-
-Create a `.env.local` file in the `frontend/` directory:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-```
-
-### 5. Start the backend
-
-```bash
-cd backend
-source venv/bin/activate   # Windows: venv\Scripts\activate
-uvicorn main:app --reload --port 8000
-```
-
-The API will be available at `http://127.0.0.1:8000`.  
-API docs (Swagger UI) at `http://127.0.0.1:8000/docs`.
-
-### 6. Start the frontend
+**Frontend Setup**
 
 ```bash
 cd frontend
+npm install
+```
+
+Create a file named `.env.local` in the frontend directory:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://yourproject.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+Start the frontend:
+
+```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+The frontend runs at http://localhost:3000
+
+**Backend Setup**
+
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+Create a file named `.env` in the backend directory:
+
+```
+SUPABASE_URL=https://yourproject.supabase.co
+SUPABASE_KEY=your-service-role-key
+ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+```
+
+Start the backend:
+
+```bash
+uvicorn main:app --reload --port 8000
+```
+
+The API runs at http://127.0.0.1:8000
+API documentation at http://127.0.0.1:8000/docs
+
+**Environment Variables Reference**
+
+| Variable | Required | Location | Purpose |
+|----------|----------|----------|---------|
+| NEXT_PUBLIC_SUPABASE_URL | Yes | frontend/.env.local | Supabase project URL |
+| NEXT_PUBLIC_SUPABASE_ANON_KEY | Yes | frontend/.env.local | Supabase anonymous key |
+| SUPABASE_URL | Yes | backend/.env | Supabase project URL |
+| SUPABASE_KEY | Yes | backend/.env | Supabase service role key |
+| ALLOWED_ORIGINS | No | backend/.env | CORS allowed origins |
+| OPENROUTER_API_KEY | No | backend/.env | LLM advisor (optional) |
 
 ---
 
-## Roadmap
+## Required Database Tables
 
-| Milestone | Status | Description |
-|-----------|--------|-------------|
-| SNI + IPB rule engine |  Done | Structured scoring from national standards |
-| Trained ML model (synthetic data) |  Done | Random Forest trained on SNI-distributed synthetic data |
-| Supabase database + auth |  Done | Persistent batch storage, email/password auth |
-| Computer vision (pod photo analysis) | Planned | Color histogram + texture thresholding from 30–50+ public pod images |
-| Real field data training |  Planned | Replace synthetic data with real records via BRIN/koperasi partnerships |
-| Multi-language (ID/EN toggle) |  Done | Full Indonesian and English interface |
-| Mobile-responsive UI | Planned | Optimize for low-bandwidth rural network conditions |
-| Offline mode |  Planned | Local-first caching for areas with intermittent internet |
+Run these SQL statements in your Supabase SQL Editor:
+
+```sql
+CREATE TABLE IF NOT EXISTS profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  full_name TEXT,
+  company_name TEXT,
+  location_region TEXT DEFAULT '',
+  user_type TEXT DEFAULT 'individual',
+  email TEXT
+);
+
+CREATE TABLE IF NOT EXISTS batches (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  seller_id UUID REFERENCES profiles(id),
+  grade TEXT,
+  quantity_kg NUMERIC,
+  origin TEXT,
+  harvest_days INTEGER,
+  conditioning_days INTEGER,
+  export_readiness_score INTEGER,
+  status TEXT DEFAULT 'pending',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS buyer_mode_state (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES profiles(id),
+  is_active BOOLEAN DEFAULT false,
+  required_grade TEXT,
+  min_quantity_kg NUMERIC,
+  max_quantity_kg NUMERIC,
+  preferred_origin TEXT,
+  industry TEXT,
+  last_heartbeat TIMESTAMPTZ,
+  activated_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS contact_requests (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  buyer_id UUID REFERENCES profiles(id),
+  batch_id UUID REFERENCES batches(id),
+  status TEXT DEFAULT 'requested',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+```
+
+---
+
+## API Reference
+
+| Method | Endpoint | Auth Required | Description |
+|--------|----------|---------------|-------------|
+| POST | /api/estimate | No | Predict vanilla grade from curing data |
+| POST | /api/value-add-calculator | No | Compare raw bean vs extract income |
+| GET | /api/price-reference | No | Get market prices by grade |
+| POST | /api/buyer-mode/toggle | Yes | Activate or deactivate buyer mode |
+| POST | /api/buyer-mode/heartbeat | Yes | Update live buyer presence timestamp |
+| GET | /api/buyer-mode/active-count | No | Get count of active buyers |
+| GET | /api/matches/{batch_id} | Yes | Match a batch against active buyers |
+| POST | /api/batches | Yes | Save a new batch |
+| GET | /api/batches | Yes | List batches with optional filters |
+| POST | /api/contact-requests | Yes | Send a purchase or contact request |
+| GET | /api/contact-requests | Yes | List your contact requests |
 
 ---
 
 ## Target Impact
 
-- **Individual farmers** gain actionable harvest timing and curing guidance without lab access.
-- **Cooperative leaders** standardize quality across member batches, strengthening negotiating position with buyers.
-- **The broader goal** is closing the export value gap: helping Indonesia capture more of the $500M+ global vanilla market by producing higher-grade cured beans instead of raw commodity exports.
+* Individual farmers gain actionable harvest timing and curing guidance without needing a laboratory.
+* Cooperative leaders standardize quality across member batches, strengthening their negotiating position with buyers.
+* The broader goal is helping Indonesia capture more of the global vanilla market by producing higher grade cured beans instead of raw commodity exports.
+* Buyers get direct access to verified farmer batches without中介 fees or supply chain opacity.
 
 ---
 
 ## License
 
-MIT — see `LICENSE` file.
+MIT. See the LICENSE file for details.
 
-*Built with purpose for Garuda Hacks 7.0.*
+Built for Garuda Hacks 7.0.
+
+* Garuda Hacks Official Website: https://www.garudahacks.com/
+* Garuda Hacks 7.0 Devpost: https://gh7.devpost.com/
