@@ -62,7 +62,7 @@ export default function Home() {
       name,
       region,
       date: new Date().toISOString().split('T')[0],
-      qtyWet,
+      qtyWet: wetQty,
       qtyDry: dryQty,
       grade,
       status: 'Verification'

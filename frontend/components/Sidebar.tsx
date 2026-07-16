@@ -9,17 +9,8 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   return (
     <aside className="w-64 border-r border-primary-ink bg-card-cream flex flex-col justify-between p-6">
       <div>
-        <div className="flex items-center mb-8 pb-4 border-b border-primary-ink/20">
-          <svg className="w-8 h-8 mr-2 text-primary-ink" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M2 22C2 22 8 20 12 16C16 12 22 2 22 2C22 2 12 8 8 12C4 16 2 22 2 22Z" />
-            <path d="M12 16L8 12" />
-            <path d="M17 11L13 7" />
-            <path d="M7 21L3 17" />
-          </svg>
-          <div className="flex flex-col">
-            <span className="text-xl font-black tracking-tight leading-none text-text-dark">VANILITY</span>
-            <span className="font-retro text-[7px] tracking-[0.2em] text-accent-gold mt-1">GH7.0 SYSTEM</span>
-          </div>
+        <div className="mb-8 pb-4 border-b border-primary-ink/20 flex justify-center">
+          <img src="/Logo_Vanility.png" className="w-28 h-auto object-contain block" alt="Vanility Logo" />
         </div>
 
         <nav className="space-y-2">
