@@ -58,10 +58,8 @@ def estimate_batch(req: EstimateRequest):
         "quantity_kg_wet": req.quantity_kg_wet,
         "quantity_kg_dry_estimate": dry_qty,
     }
-    try:
-        save_vanilla_batch(batch_data)
-    except Exception as e:
-        print(f"Backend save to Supabase skipped (no service_role key): {e}")
+    # Backend estimation endpoint should only calculate results, not persist them.
+    # Persisting will be handled explicitly by the client clicking "Save Batch".
     
     return EstimateResponse(
         harvest_status=harvest_status,

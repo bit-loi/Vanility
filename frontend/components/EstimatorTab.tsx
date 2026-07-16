@@ -86,61 +86,21 @@ export default function EstimatorTab({ onSaveBatch, onSaveBatchAuto }: Estimator
         recommendations: data.recommendations
       });
 
-      // Auto-save to database via authenticated Supabase client
-      let saveSuccess = true;
-      if (onSaveBatchAuto) {
-        try {
-          await onSaveBatchAuto({
-            farmer_name: estName || `Batch ${estRegion.split(',')[0]}`,
-            location_region: estRegion,
-            pollination_date: estPollinationDate,
-            curing_method: estCuringMethod,
-            sweating_duration_days: estSweatingDays,
-            sun_drying_duration_days: estDryingDays,
-            conditioning_duration_days: estConditioningDays,
-            predicted_grade: data.predicted_grade,
-            confidence_score: data.confidence_score,
-            quantity_kg_wet: estWetQty,
-            quantity_kg_dry_estimate: data.quantity_kg_dry_estimate
-          });
-        } catch (e: any) {
-          saveSuccess = false;
-          console.error("Auto-save failed:", e.message || e);
-          Swal.fire({
-            icon: 'error',
-            title: 'Save Failed',
-            html: '<p style="font-size: 14px; color: #3b2313;">Grade assessment computed successfully, but could not save to database. You need to fix RLS permissions first. See instructions below.</p><div style="margin-top:10px;padding:8px;background:#f0ebe0;border-radius:8px;font-size:11px;text-align:left;color:#3b2313;"><strong>Fix:</strong> In Supabase dashboard → SQL Editor, run:<br/><code style="background:#3b2313;color:#fbf7ee;padding:2px 6px;border-radius:4px;font-size:10px;">ALTER TABLE vanilla_batches DISABLE ROW LEVEL SECURITY;</code></div>',
-            confirmButtonText: 'View Results Anyway',
-            confirmButtonColor: '#3b2313',
-            background: '#fbf7ee',
-            color: '#3b2313',
-            iconColor: '#dc2626',
-            customClass: {
-              popup: 'rounded-xl border-2',
-              title: 'text-xl font-black',
-              confirmButton: 'rounded-lg font-bold text-sm px-6 py-2',
-            },
-          });
-        }
-      }
-
-      if (saveSuccess) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Assessment Complete!',
-          html: `<p style="font-size: 14px; color: #3b2313;">Assessed grade: <strong>${data.predicted_grade}</strong><br/>Confidence: <strong>${Math.round(data.confidence_score * 100)}%</strong><br/>✓ Batch has been saved to your dashboard.</p>`,
-          confirmButtonText: 'View Results',
-          confirmButtonColor: '#3b2313',
-          background: '#fbf7ee',
-          color: '#3b2313',
-          iconColor: '#065f46',
-          customClass: {
-            popup: 'rounded-xl border-2',
-            title: 'text-xl font-black',
-            confirmButton: 'rounded-lg font-bold text-sm px-6 py-2',
-          },
-        });
-      }
+      Swal.fire({
+        icon: 'success',
+        title: 'Assessment Complete!',
+        html: `<p style="font-size: 14px; color: #3b2313;">Assessed grade: <strong>${data.predicted_grade}</strong><br/>Confidence: <strong>${Math.round(data.confidence_score * 100)}%</strong><br/>Click 'Save Batch to Dashboard' on the right to save it.</p>`,
+        confirmButtonText: 'View Results',
+        confirmButtonColor: '#3b2313',
+        background: '#fbf7ee',
+        color: '#3b2313',
+        iconColor: '#065f46',
+        customClass: {
+          popup: 'rounded-xl border-2',
+          title: 'text-xl font-black',
+          confirmButton: 'rounded-lg font-bold text-sm px-6 py-2',
+        },
+      });
     } catch (err) {
       console.error(err);
       Swal.fire({
