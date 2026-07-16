@@ -4,6 +4,7 @@ import { calculateValueAdd } from '../lib/api';
 export default function CalculatorTab() {
   const [calcQty, setCalcQty] = useState(10);
   const [calcGrade, setCalcGrade] = useState<'Grade A' | 'Grade B' | 'Low Grade'>('Grade A');
+  const [isGradeOpen, setIsGradeOpen] = useState(false);
 
   const [rawIncome, setRawIncome] = useState(1750);
   const [extractIncome, setExtractIncome] = useState(2700);
@@ -61,17 +62,38 @@ export default function CalculatorTab() {
             />
           </div>
 
-          <div>
+          <div className="relative">
             <label className="block font-bold mb-1 text-text-dark">Estimated Vanilla Grade</label>
-            <select
-              value={calcGrade}
-              onChange={e => setCalcGrade(e.target.value as 'Grade A' | 'Grade B' | 'Low Grade')}
-              className="w-full px-3 py-2 border-2 border-primary-ink rounded-lg bg-white text-primary-ink focus:outline-none"
+            <button
+              type="button"
+              onClick={() => setIsGradeOpen(!isGradeOpen)}
+              className="w-full flex justify-between items-center px-3 py-2 border-2 border-primary-ink rounded-lg bg-white focus:outline-none font-bold text-sm text-left shadow-[2px_2px_0_0_#3b2313] active:translate-y-0.5 active:shadow-none transition-all"
             >
-              <option>Grade A</option>
-              <option>Grade B</option>
-              <option>Low Grade</option>
-            </select>
+              <span>{calcGrade}</span>
+              <svg className={`w-4 h-4 transition-transform ${isGradeOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {isGradeOpen && (
+              <div className="absolute left-0 right-0 mt-1.5 border-2 border-primary-ink bg-white rounded-lg shadow-[3px_3px_0_0_#3b2313] z-10 overflow-hidden">
+                {['Grade A', 'Grade B', 'Low Grade'].map((g) => (
+                  <button
+                    key={g}
+                    type="button"
+                    onClick={() => {
+                      setCalcGrade(g as 'Grade A' | 'Grade B' | 'Low Grade');
+                      setIsGradeOpen(false);
+                    }}
+                    className={`w-full px-3 py-2 text-left text-sm font-bold transition-colors border-b border-primary-ink/10 last:border-0 ${
+                      calcGrade === g ? 'bg-primary-ink text-card-cream' : 'hover:bg-cream-base text-primary-ink'
+                    }`}
+                  >
+                    {g}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

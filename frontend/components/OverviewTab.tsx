@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Batch } from './types';
 
@@ -6,9 +8,58 @@ interface OverviewTabProps {
   totalWetQty: number;
   totalDryQty: number;
   avgGrade: string;
+  userName: string;
+  lang: 'en' | 'id';
 }
 
-export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrade }: OverviewTabProps) {
+const overviewTranslations = {
+  en: {
+    welcome: 'Good afternoon',
+    tickerSub: 'Here is your AI powered vanilla production dashboard. Standardize harvesting and curing processes to double your value-add.',
+    batchesTracked: 'Batches Tracked',
+    totalWet: 'Total Qty (Wet)',
+    dryYield: 'Potential Dry Yield',
+    avgGrade: 'Average Grade',
+    activeBatches: 'Active Vanilla Batches',
+    liveDb: 'Live Database',
+    tblId: 'ID',
+    tblName: 'Batch Name',
+    tblRegion: 'Region',
+    tblQty: 'Qty (Wet/Dry)',
+    tblGrade: 'Grade',
+    tblStatus: 'Status',
+    logsTitle: 'AI Agronomist logs',
+    alertTitle: 'Batch B003 Alert',
+    alertText: 'The sweating duration recorded for Batch B003 was shorter than standard. Maintain sun drying strictly between 5 and 14 days under standard conditions to control microbial growth risk.',
+    marketTitle: 'Market Insight',
+    marketText: 'Global demand for premium Grade A vanilla beans has increased. Processing raw beans into high quality cured pods currently increases market value by up to 54 percent per kilogram.'
+  },
+  id: {
+    welcome: 'Selamat sore',
+    tickerSub: 'Ini adalah dasbor produksi vanili bertenaga AI Anda. Standardisasi proses panen dan curing untuk melipatgandakan nilai tambah Anda.',
+    batchesTracked: 'Batch Dipantau',
+    totalWet: 'Total Kuantitas (Basah)',
+    dryYield: 'Potensi Hasil Kering',
+    avgGrade: 'Rata-rata Mutu',
+    activeBatches: 'Batch Vanili Aktif',
+    liveDb: 'Database Langsung',
+    tblId: 'ID',
+    tblName: 'Nama Batch',
+    tblRegion: 'Wilayah',
+    tblQty: 'Kuantitas (Basah/Kering)',
+    tblGrade: 'Mutu',
+    tblStatus: 'Status',
+    logsTitle: 'Catatan Agronomis AI',
+    alertTitle: 'Peringatan Batch B003',
+    alertText: 'Durasi sweating yang tercatat untuk Batch B003 lebih singkat dari standar. Jaga durasi pengeringan matahari ketat antara 5 hingga 14 hari di bawah kondisi standar untuk mengendalikan risiko pertumbuhan mikroba.',
+    marketTitle: 'Wawasan Pasar',
+    marketText: 'Permintaan global untuk biji vanili Grade A premium telah meningkat. Mengolah biji mentah menjadi polong kering berkualitas tinggi saat ini meningkatkan nilai pasar hingga 54 persen per kilogram.'
+  }
+};
+
+export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrade, userName, lang }: OverviewTabProps) {
+  const t = overviewTranslations[lang];
+
   return (
     <div className="space-y-6">
       <div className="relative border-2 border-primary-ink p-6 rounded-xl bg-card-cream cartoon-shadow-lg">
@@ -17,16 +68,20 @@ export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrad
         <span className="absolute -bottom-1.5 -left-1.5 text-xs text-primary-ink font-mono leading-none font-bold">+</span>
         <span className="absolute -bottom-1.5 -right-1.5 text-xs text-primary-ink font-mono leading-none font-bold">+</span>
         <p className="font-retro text-[8px] tracking-[0.25em] text-accent-gold mb-2 uppercase">System Welcome Ticker</p>
-        <h2 className="text-3xl font-light tracking-[-0.045em] text-text-dark mb-1">Good afternoon, Pak Yuven</h2>
-        <p className="text-sm text-primary-ink/75 max-w-2xl leading-relaxed">Here is your AI powered vanilla production dashboard. Standardize harvesting and curing processes to double your value-add.</p>
+        <h2 className="text-3xl font-light tracking-[-0.045em] text-text-dark mb-1">
+          {t.welcome}, {userName}
+        </h2>
+        <p className="text-sm text-primary-ink/75 max-w-2xl leading-relaxed">
+          {t.tickerSub}
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
-          { label: 'Batches Tracked', value: batches.length },
-          { label: 'Total Qty (Wet)', value: `${totalWetQty.toFixed(1)} kg` },
-          { label: 'Potential Dry Yield', value: `${totalDryQty.toFixed(1)} kg` },
-          { label: 'Average Grade', value: avgGrade }
+          { label: t.batchesTracked, value: batches.length },
+          { label: t.totalWet, value: `${totalWetQty.toFixed(1)} kg` },
+          { label: t.dryYield, value: `${totalDryQty.toFixed(1)} kg` },
+          { label: t.avgGrade, value: avgGrade }
         ].map((kpi, idx) => (
           <div key={idx} className="relative border-2 border-primary-ink p-5 rounded-xl bg-card-cream cartoon-shadow flex flex-col justify-between">
             <span className="absolute -top-1.5 -left-1.5 text-xs text-primary-ink font-mono leading-none font-bold">+</span>
@@ -47,20 +102,20 @@ export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrad
           <span className="absolute -bottom-1.5 -right-1.5 text-xs text-primary-ink font-mono leading-none font-bold">+</span>
           
           <div className="flex justify-between items-center mb-4 border-b-2 border-primary-ink/15 pb-2">
-            <h3 className="font-retro text-[9px] tracking-wider text-accent-gold uppercase">Active Vanilla Batches</h3>
-            <span className="font-retro text-[7px] text-primary-ink/50 uppercase">Live Database</span>
+            <h3 className="font-retro text-[9px] tracking-wider text-accent-gold uppercase">{t.activeBatches}</h3>
+            <span className="font-retro text-[7px] text-primary-ink/50 uppercase">{t.liveDb}</span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm border-collapse">
               <thead>
                 <tr className="border-b-2 border-primary-ink">
-                  <th className="pb-3 font-retro text-[8px] tracking-wider text-accent-gold uppercase">ID</th>
-                  <th className="pb-3 font-retro text-[8px] tracking-wider text-accent-gold uppercase">Batch Name</th>
-                  <th className="pb-3 font-retro text-[8px] tracking-wider text-accent-gold uppercase">Region</th>
-                  <th className="pb-3 font-retro text-[8px] tracking-wider text-accent-gold uppercase">Qty (Wet/Dry)</th>
-                  <th className="pb-3 font-retro text-[8px] tracking-wider text-accent-gold uppercase">Grade</th>
-                  <th className="pb-3 font-retro text-[8px] tracking-wider text-accent-gold uppercase">Status</th>
+                  <th className="pb-3 font-retro text-[8px] tracking-wider text-accent-gold uppercase">{t.tblId}</th>
+                  <th className="pb-3 font-retro text-[8px] tracking-wider text-accent-gold uppercase">{t.tblName}</th>
+                  <th className="pb-3 font-retro text-[8px] tracking-wider text-accent-gold uppercase">{t.tblRegion}</th>
+                  <th className="pb-3 font-retro text-[8px] tracking-wider text-accent-gold uppercase">{t.tblQty}</th>
+                  <th className="pb-3 font-retro text-[8px] tracking-wider text-accent-gold uppercase">{t.tblGrade}</th>
+                  <th className="pb-3 font-retro text-[8px] tracking-wider text-accent-gold uppercase">{t.tblStatus}</th>
                 </tr>
               </thead>
               <tbody>
@@ -101,18 +156,18 @@ export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrad
           <span className="absolute -bottom-1.5 -right-1.5 text-xs text-primary-ink font-mono leading-none font-bold">+</span>
           
           <div className="flex justify-between items-center mb-4 border-b-2 border-primary-ink/15 pb-2">
-            <h3 className="font-retro text-[9px] tracking-wider text-accent-gold uppercase">AI Agronomist logs</h3>
+            <h3 className="font-retro text-[9px] tracking-wider text-accent-gold uppercase">{t.logsTitle}</h3>
             <span className="w-2 h-2 rounded-full bg-[#065f46] animate-pulse"></span>
           </div>
 
           <div className="space-y-4">
             <div className="p-4 rounded-lg bg-card-cream border-2 border-primary-ink text-xs leading-relaxed shadow-[2px_2px_0_0_#3b2313]">
-              <p className="font-retro text-[7px] tracking-wider text-accent-gold uppercase mb-1">Batch B003 Alert</p>
-              <p className="text-primary-ink/90 font-medium">The sweating duration recorded for Batch B003 was shorter than standard. Maintain sun drying strictly between 5 and 14 days under standard conditions to control microbial growth risk.</p>
+              <p className="font-retro text-[7px] tracking-wider text-accent-gold uppercase mb-1">{t.alertTitle}</p>
+              <p className="text-primary-ink/90 font-medium">{t.alertText}</p>
             </div>
             <div className="p-4 rounded-lg bg-card-cream border-2 border-primary-ink text-xs leading-relaxed shadow-[2px_2px_0_0_#3b2313]">
-              <p className="font-retro text-[7px] tracking-wider text-accent-gold uppercase mb-1">Market Insight</p>
-              <p className="text-primary-ink/90 font-medium">Global demand for premium Grade A vanilla beans has increased. Processing raw beans into high quality cured pods currently increases market value by up to 54 percent per kilogram.</p>
+              <p className="font-retro text-[7px] tracking-wider text-accent-gold uppercase mb-1">{t.marketTitle}</p>
+              <p className="text-primary-ink/90 font-medium">{t.marketText}</p>
             </div>
           </div>
         </div>

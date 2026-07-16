@@ -1,11 +1,69 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClient } from '../utils/supabase/client';
 
 interface SidebarProps {
   activeTab: 'overview' | 'estimator' | 'calculator' | 'guidance';
   setActiveTab: (tab: 'overview' | 'estimator' | 'calculator' | 'guidance') => void;
+  lang: 'en' | 'id';
 }
 
-export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
+const sidebarTranslations = {
+  en: {
+    overview: 'Overview',
+    estimator: 'Maturity Estimator',
+    calculator: 'Value Add Calc',
+    guidance: 'Curing Guidance'
+  },
+  id: {
+    overview: 'Ikhtisar Dasbor',
+    estimator: 'Estimator Mutu',
+    calculator: 'Nilai Tambah',
+    guidance: 'Panduan Curing'
+  }
+};
+
+export default function Sidebar({ activeTab, setActiveTab, lang }: SidebarProps) {
+  const router = useRouter();
+  const supabase = createClient();
+  const [email, setEmail] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [name, setName] = useState('Petani');
+
+  useEffect(() => {
+    async function fetchUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setEmail(user.email || '');
+        setAvatarUrl(user.user_metadata?.avatar_url || '');
+        setName(user.user_metadata?.full_name || user.email?.split('@')[0] || 'Petani');
+      }
+    }
+    fetchUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        setEmail(session.user.email || '');
+        setAvatarUrl(session.user.user_metadata?.avatar_url || '');
+        setName(session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Petani');
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.push('/login');
+    router.refresh();
+  };
+
+  const t = sidebarTranslations[lang];
+
   return (
     <aside className="w-64 border-r border-primary-ink bg-card-cream flex flex-col justify-between p-6">
       <div>
@@ -28,7 +86,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
               <rect x="14" y="14" width="7" height="7" />
               <rect x="3" y="14" width="7" height="7" />
             </svg>
-            <span className="font-medium text-sm">Overview</span>
+            <span className="font-medium text-sm">{t.overview}</span>
           </button>
 
           <button
@@ -40,9 +98,9 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
             }`}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
             </svg>
-            <span className="font-medium text-sm">Grade Estimator</span>
+            <span className="font-medium text-sm">{t.estimator}</span>
           </button>
 
           <button
@@ -60,7 +118,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
               <line x1="9" y1="17" x2="15" y2="17" />
               <line x1="12" y1="9" x2="12" y2="17" />
             </svg>
-            <span className="font-medium text-sm">Value Add Calc</span>
+            <span className="font-medium text-sm">{t.calculator}</span>
           </button>
 
           <button
@@ -75,22 +133,38 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
               <path d="M9 11l3 3L22 4" />
               <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
             </svg>
-            <span className="font-medium text-sm">Curing Guidance</span>
+            <span className="font-medium text-sm">{t.guidance}</span>
           </button>
         </nav>
       </div>
 
       <div className="border-t border-primary-ink/20 pt-4 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-full border-2 border-primary-ink bg-[#EAE4D9] flex items-center justify-center font-bold text-lg text-primary-ink shadow-[1px_1px_0_0_#3b2313]">
-            Y
+        <button
+          onClick={() => router.push('/profile')}
+          className="flex items-center space-x-3 overflow-hidden hover:opacity-85 transition-opacity text-left"
+        >
+          {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              className="w-10 h-10 rounded-full border-2 border-primary-ink object-cover flex-shrink-0 shadow-[1px_1px_0_0_#3b2313]"
+              alt="Avatar"
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full border-2 border-primary-ink bg-[#EAE4D9] flex-shrink-0 flex items-center justify-center font-bold text-lg text-primary-ink shadow-[1px_1px_0_0_#3b2313]">
+              {name ? name.charAt(0).toUpperCase() : 'P'}
+            </div>
+          )}
+          <div className="overflow-hidden">
+            <p className="text-xs font-bold leading-tight text-text-dark truncate max-w-[90px]">{name}</p>
+            <p className="font-retro text-[5px] tracking-wider text-accent-gold mt-0.5">FARMER USER</p>
           </div>
-          <div>
-            <p className="text-sm font-bold leading-tight text-text-dark">Pak Yuven</p>
-            <p className="font-retro text-[6px] tracking-wider text-accent-gold mt-0.5">FARMER ADMIN</p>
-          </div>
-        </div>
-        <button className="p-1.5 hover:bg-[#EAE4D9] rounded-lg transition-colors border border-transparent text-primary-ink">
+        </button>
+        <button
+          onClick={handleSignOut}
+          className="p-1.5 hover:bg-[#EAE4D9] rounded-lg transition-colors border border-transparent text-primary-ink"
+          title="Sign Out"
+        >
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
             <polyline points="16 17 21 12 16 7" />

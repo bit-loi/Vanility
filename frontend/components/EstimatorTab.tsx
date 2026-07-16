@@ -14,6 +14,8 @@ export default function EstimatorTab({ onSaveBatch }: EstimatorTabProps) {
   const [estDryingDays, setEstDryingDays] = useState(0);
   const [estConditioningDays, setEstConditioningDays] = useState(0);
   const [estWetQty, setEstWetQty] = useState(0);
+  const [isRegionOpen, setIsRegionOpen] = useState(false);
+  const [isCuringOpen, setIsCuringOpen] = useState(false);
 
   const [estResult, setEstResult] = useState<{
     daysSincePollination: number;
@@ -107,18 +109,41 @@ export default function EstimatorTab({ onSaveBatch }: EstimatorTabProps) {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div>
+            <div className="relative">
               <label className="block font-bold mb-1 text-text-dark">Region</label>
-              <select
-                value={estRegion}
-                onChange={e => setEstRegion(e.target.value)}
-                className="w-full px-3 py-2 border-2 border-primary-ink rounded-lg bg-white text-primary-ink focus:outline-none"
+              <button
+                type="button"
+                onClick={() => {
+                  setIsRegionOpen(!isRegionOpen);
+                  setIsCuringOpen(false);
+                }}
+                className="w-full flex justify-between items-center px-3 py-2 border-2 border-primary-ink rounded-lg bg-white focus:outline-none font-medium text-sm text-left shadow-[2px_2px_0_0_#3b2313] active:translate-y-0.5 active:shadow-none transition-all"
               >
-                <option>Manggarai Barat, NTT</option>
-                <option>Ende, NTT</option>
-                <option>Flores Timur, NTT</option>
-                <option>Minahasa, Sulawesi Utara</option>
-              </select>
+                <span>{estRegion}</span>
+                <svg className={`w-4 h-4 transition-transform ${isRegionOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {isRegionOpen && (
+                <div className="absolute left-0 right-0 mt-1.5 border-2 border-primary-ink bg-white rounded-lg shadow-[3px_3px_0_0_#3b2313] z-10 overflow-hidden max-h-48 overflow-y-auto">
+                  {['Manggarai Barat, NTT', 'Ende, NTT', 'Flores Timur, NTT', 'Minahasa, Sulawesi Utara'].map((r) => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => {
+                        setEstRegion(r);
+                        setIsRegionOpen(false);
+                      }}
+                      className={`w-full px-3 py-2 text-left text-sm font-medium transition-colors border-b border-primary-ink/10 last:border-0 ${
+                        estRegion === r ? 'bg-primary-ink text-card-cream' : 'hover:bg-cream-base text-primary-ink'
+                      }`}
+                    >
+                      {r}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             <div>
               <label className="block font-bold mb-1 text-text-dark">Pollination Date</label>
@@ -144,16 +169,50 @@ export default function EstimatorTab({ onSaveBatch }: EstimatorTabProps) {
                 className="w-full px-3 py-2 border-2 border-primary-ink rounded-lg bg-white text-primary-ink focus:outline-none"
               />
             </div>
-            <div>
+            <div className="relative">
               <label className="block font-bold mb-1 text-text-dark">Curing Method</label>
-              <select
-                value={estCuringMethod}
-                onChange={e => setEstCuringMethod(e.target.value as 'tradisional' | 'terkontrol')}
-                className="w-full px-3 py-2 border-2 border-primary-ink rounded-lg bg-white text-primary-ink focus:outline-none"
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCuringOpen(!isCuringOpen);
+                  setIsRegionOpen(false);
+                }}
+                className="w-full flex justify-between items-center px-3 py-2 border-2 border-primary-ink rounded-lg bg-white focus:outline-none font-medium text-sm text-left shadow-[2px_2px_0_0_#3b2313] active:translate-y-0.5 active:shadow-none transition-all"
               >
-                <option value="tradisional">Traditional (Traditional Drying)</option>
-                <option value="terkontrol">Controlled (Solar Greenhouse)</option>
-              </select>
+                <span>{estCuringMethod === 'tradisional' ? 'Traditional (Traditional Drying)' : 'Controlled (Solar Greenhouse)'}</span>
+                <svg className={`w-4 h-4 transition-transform ${isCuringOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {isCuringOpen && (
+                <div className="absolute left-0 right-0 mt-1.5 border-2 border-primary-ink bg-white rounded-lg shadow-[3px_3px_0_0_#3b2313] z-10 overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEstCuringMethod('tradisional');
+                      setIsCuringOpen(false);
+                    }}
+                    className={`w-full px-3 py-2 text-left text-sm font-medium transition-colors border-b border-primary-ink/10 ${
+                      estCuringMethod === 'tradisional' ? 'bg-primary-ink text-card-cream' : 'hover:bg-cream-base text-primary-ink'
+                    }`}
+                  >
+                    Traditional (Traditional Drying)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEstCuringMethod('terkontrol');
+                      setIsCuringOpen(false);
+                    }}
+                    className={`w-full px-3 py-2 text-left text-sm font-medium transition-colors ${
+                      estCuringMethod === 'terkontrol' ? 'bg-primary-ink text-card-cream' : 'hover:bg-cream-base text-primary-ink'
+                    }`}
+                  >
+                    Controlled (Solar Greenhouse)
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
