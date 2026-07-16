@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Swal from 'sweetalert2';
 import { createClient } from '../../utils/supabase/client';
 import Sidebar from '../../components/Sidebar';
 import Header from '../../components/Header';
@@ -78,7 +79,67 @@ export default function DashboardPage() {
     return () => clearInterval(timer);
   }, []);
 
-  const handleSaveBatch = async (name: string, region: string, wetQty: number, dryQty: number, grade: string) => {
+  // Auto-save on form submit — saves to DB then stays on Estimator tab to show results
+  const handleSaveBatchAuto = async (batchData: {
+    farmer_name: string;
+    location_region: string;
+    pollination_date: string;
+    curing_method: string;
+    sweating_duration_days: number;
+    sun_drying_duration_days: number;
+    conditioning_duration_days: number;
+    predicted_grade: string;
+    confidence_score: number;
+    quantity_kg_wet: number;
+    quantity_kg_dry_estimate: number;
+  }) => {
+    try {
+      const { error } = await supabase
+        .from('vanilla_batches')
+        .insert(batchData);
+      if (error) throw error;
+    } catch (e: any) {
+      console.error("Error saving batch to Supabase:", e.message || e);
+      throw e; // Let EstimatorTab handle the error
+    }
+    await loadBatches();
+  };
+
+  // Manual save + navigate to overview (used by Save Batch button)
+  const handleSaveBatch = async (batchData: {
+    farmer_name: string;
+    location_region: string;
+    pollination_date: string;
+    curing_method: string;
+    sweating_duration_days: number;
+    sun_drying_duration_days: number;
+    conditioning_duration_days: number;
+    predicted_grade: string;
+    confidence_score: number;
+    quantity_kg_wet: number;
+    quantity_kg_dry_estimate: number;
+  }) => {
+    try {
+      const { error } = await supabase
+        .from('vanilla_batches')
+        .insert(batchData);
+      if (error) throw error;
+    } catch (e: any) {
+      console.error("Error saving batch to Supabase:", e.message || e);
+      Swal.fire({
+        icon: 'error',
+        title: 'Save Failed',
+        text: 'Could not save batch to database. Please run the RLS fix SQL in Supabase dashboard first.',
+        confirmButtonColor: '#3b2313',
+        background: '#fbf7ee',
+        color: '#3b2313',
+        customClass: {
+          popup: 'rounded-xl border-2',
+          confirmButton: 'rounded-lg font-bold text-sm px-6 py-2',
+        },
+      });
+      return;
+    }
     await loadBatches();
     setActiveTab('overview');
   };
@@ -132,7 +193,7 @@ export default function DashboardPage() {
           )}
 
           {activeTab === 'estimator' && (
-            <EstimatorTab onSaveBatch={handleSaveBatch} />
+            <EstimatorTab onSaveBatch={handleSaveBatch} onSaveBatchAuto={handleSaveBatchAuto} />
           )}
 
           {activeTab === 'calculator' && (

@@ -1,11 +1,37 @@
 import React, { useState } from 'react';
+import Swal from 'sweetalert2';
 import { estimateBatch } from '../lib/api';
 
 interface EstimatorTabProps {
-  onSaveBatch: (name: string, region: string, wetQty: number, dryQty: number, grade: string) => void;
+  onSaveBatch: (batchData: {
+    farmer_name: string;
+    location_region: string;
+    pollination_date: string;
+    curing_method: string;
+    sweating_duration_days: number;
+    sun_drying_duration_days: number;
+    conditioning_duration_days: number;
+    predicted_grade: string;
+    confidence_score: number;
+    quantity_kg_wet: number;
+    quantity_kg_dry_estimate: number;
+  }) => void;
+  onSaveBatchAuto?: (batchData: {
+    farmer_name: string;
+    location_region: string;
+    pollination_date: string;
+    curing_method: string;
+    sweating_duration_days: number;
+    sun_drying_duration_days: number;
+    conditioning_duration_days: number;
+    predicted_grade: string;
+    confidence_score: number;
+    quantity_kg_wet: number;
+    quantity_kg_dry_estimate: number;
+  }) => Promise<void>;
 }
 
-export default function EstimatorTab({ onSaveBatch }: EstimatorTabProps) {
+export default function EstimatorTab({ onSaveBatch, onSaveBatchAuto }: EstimatorTabProps) {
   const [estName, setEstName] = useState('');
   const [estRegion, setEstRegion] = useState('Manggarai Barat, NTT');
   const [estPollinationDate, setEstPollinationDate] = useState('');
@@ -59,27 +85,112 @@ export default function EstimatorTab({ onSaveBatch }: EstimatorTabProps) {
         priceMax: data.estimated_price_usd_per_kg_max,
         recommendations: data.recommendations
       });
+
+      // Auto-save to database via authenticated Supabase client
+      let saveSuccess = true;
+      if (onSaveBatchAuto) {
+        try {
+          await onSaveBatchAuto({
+            farmer_name: estName || `Batch ${estRegion.split(',')[0]}`,
+            location_region: estRegion,
+            pollination_date: estPollinationDate,
+            curing_method: estCuringMethod,
+            sweating_duration_days: estSweatingDays,
+            sun_drying_duration_days: estDryingDays,
+            conditioning_duration_days: estConditioningDays,
+            predicted_grade: data.predicted_grade,
+            confidence_score: data.confidence_score,
+            quantity_kg_wet: estWetQty,
+            quantity_kg_dry_estimate: data.quantity_kg_dry_estimate
+          });
+        } catch (e: any) {
+          saveSuccess = false;
+          console.error("Auto-save failed:", e.message || e);
+          Swal.fire({
+            icon: 'error',
+            title: 'Save Failed',
+            html: '<p style="font-size: 14px; color: #3b2313;">Grade assessment computed successfully, but could not save to database. You need to fix RLS permissions first. See instructions below.</p><div style="margin-top:10px;padding:8px;background:#f0ebe0;border-radius:8px;font-size:11px;text-align:left;color:#3b2313;"><strong>Fix:</strong> In Supabase dashboard → SQL Editor, run:<br/><code style="background:#3b2313;color:#fbf7ee;padding:2px 6px;border-radius:4px;font-size:10px;">ALTER TABLE vanilla_batches DISABLE ROW LEVEL SECURITY;</code></div>',
+            confirmButtonText: 'View Results Anyway',
+            confirmButtonColor: '#3b2313',
+            background: '#fbf7ee',
+            color: '#3b2313',
+            iconColor: '#dc2626',
+            customClass: {
+              popup: 'rounded-xl border-2',
+              title: 'text-xl font-black',
+              confirmButton: 'rounded-lg font-bold text-sm px-6 py-2',
+            },
+          });
+        }
+      }
+
+      if (saveSuccess) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Assessment Complete!',
+          html: `<p style="font-size: 14px; color: #3b2313;">Assessed grade: <strong>${data.predicted_grade}</strong><br/>Confidence: <strong>${Math.round(data.confidence_score * 100)}%</strong><br/>✓ Batch has been saved to your dashboard.</p>`,
+          confirmButtonText: 'View Results',
+          confirmButtonColor: '#3b2313',
+          background: '#fbf7ee',
+          color: '#3b2313',
+          iconColor: '#065f46',
+          customClass: {
+            popup: 'rounded-xl border-2',
+            title: 'text-xl font-black',
+            confirmButton: 'rounded-lg font-bold text-sm px-6 py-2',
+          },
+        });
+      }
     } catch (err) {
       console.error(err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Assessment Failed',
+        html: '<p style="font-size: 14px; color: #3b2313;">Could not connect to the decision support server. Please make sure the backend is running.</p>',
+        confirmButtonText: 'Try Again',
+        confirmButtonColor: '#3b2313',
+        background: '#fbf7ee',
+        color: '#3b2313',
+        customClass: {
+          popup: 'rounded-xl border-2',
+          title: 'text-xl font-black',
+          confirmButton: 'rounded-lg font-bold text-sm px-6 py-2',
+        },
+      });
     }
   };
 
   const handleSave = () => {
     if (!estResult) return;
-    onSaveBatch(
-      estName || `Batch ${estRegion.split(',')[0]}`,
-      estRegion,
-      estWetQty,
-      estResult.dryQtyEstimate,
-      estResult.predictedGrade
-    );
-    setEstResult(null);
-    setEstName('');
-    setEstPollinationDate('');
-    setEstSweatingDays(0);
-    setEstDryingDays(0);
-    setEstConditioningDays(0);
-    setEstWetQty(0);
+    onSaveBatch({
+      farmer_name: estName || `Batch ${estRegion.split(',')[0]}`,
+      location_region: estRegion,
+      pollination_date: estPollinationDate,
+      curing_method: estCuringMethod,
+      sweating_duration_days: estSweatingDays,
+      sun_drying_duration_days: estDryingDays,
+      conditioning_duration_days: estConditioningDays,
+      predicted_grade: estResult.predictedGrade,
+      confidence_score: estResult.confidence / 100,
+      quantity_kg_wet: estWetQty,
+      quantity_kg_dry_estimate: estResult.dryQtyEstimate
+    });
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Batch Saved!',
+      html: '<p style="font-size: 14px; color: #3b2313;">Your vanilla batch has been saved to the dashboard and recorded in the database.</p>',
+      confirmButtonText: 'Go to Overview',
+      confirmButtonColor: '#3b2313',
+      background: '#fbf7ee',
+      color: '#3b2313',
+      iconColor: '#065f46',
+      customClass: {
+        popup: 'rounded-xl border-2',
+        title: 'text-xl font-black',
+        confirmButton: 'rounded-lg font-bold text-sm px-6 py-2',
+      },
+    });
   };
 
   return (
@@ -256,7 +367,7 @@ export default function EstimatorTab({ onSaveBatch }: EstimatorTabProps) {
             type="submit"
             className="w-full cartoon-btn cartoon-shine-container font-bold py-3.5 rounded-lg text-sm cursor-pointer mt-4"
           >
-            Run AI Estimation
+            Run Grade Assessment
           </button>
         </form>
       </div>
@@ -270,13 +381,13 @@ export default function EstimatorTab({ onSaveBatch }: EstimatorTabProps) {
             <span className="absolute -bottom-1.5 -right-1.5 text-xs text-primary-ink font-mono leading-none font-bold">+</span>
             
             <div className="flex justify-between items-center mb-4 border-b-2 border-primary-ink/15 pb-2">
-              <h3 className="font-retro text-[9px] tracking-wider text-accent-gold uppercase">AI Grading Results</h3>
-              <span className="font-retro text-[7px] text-[#065f46] uppercase">ESTIMATED</span>
+              <h3 className="font-retro text-[9px] tracking-wider text-accent-gold uppercase">Grade Assessment Results</h3>
+              <span className="font-retro text-[7px] text-[#065f46] uppercase">DECISION SUPPORT</span>
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="border-2 border-primary-ink p-4 rounded-lg bg-card-cream shadow-[2px_2px_0_0_#3b2313]">
-                <p className="font-retro text-[7px] tracking-wider text-accent-gold uppercase">Predicted Grade</p>
+                <p className="font-retro text-[7px] tracking-wider text-accent-gold uppercase">Assessed Grade</p>
                 <p className="text-2xl font-black mt-1 text-text-dark">{estResult.predictedGrade}</p>
                 <span className="text-[10px] text-primary-ink/60 font-bold">Confidence: {estResult.confidence}%</span>
               </div>
@@ -316,6 +427,13 @@ export default function EstimatorTab({ onSaveBatch }: EstimatorTabProps) {
               </div>
             )}
 
+            <div className="mb-4 p-3 rounded-lg bg-[#FFF8E7] border-2 border-accent-gold/40 text-[10px] leading-relaxed">
+              <p className="font-bold text-accent-gold uppercase text-[7px] tracking-wider mb-1">ⓘ Methodology Note</p>
+              <p className="text-primary-ink/80 font-medium">
+                This assessment is based on <strong>SNI 01-0012-2015</strong> grading rules and IPB curing research, codified into a trained model. The current model uses synthetic data; our roadmap replaces this with real field data through BRIN/koperasi partnerships. A computer vision component analyzing bean pod photos is also planned for future releases.
+              </p>
+            </div>
+
             <button
               onClick={handleSave}
               className="w-full cartoon-btn cartoon-shine-container font-bold py-3 rounded-lg text-xs cursor-pointer"
@@ -332,7 +450,7 @@ export default function EstimatorTab({ onSaveBatch }: EstimatorTabProps) {
             <svg className="w-12 h-12 text-primary-ink/40 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <p className="text-sm font-bold text-primary-ink/60">Enter production data on the left to display AI grading analysis.</p>
+            <p className="text-sm font-bold text-primary-ink/60">Enter production data on the left to run a structured grade assessment based on SNI standards.</p>
           </div>
         )}
       </div>

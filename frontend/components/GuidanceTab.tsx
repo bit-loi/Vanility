@@ -1,12 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import Swal from 'sweetalert2';
 
-export default function GuidanceTab() {
-  const [guideChecks, setGuideChecks] = useState<Record<string, boolean>>({
+const STORAGE_KEY = 'vanility_curing_checks';
+
+function getDefaultChecks(): Record<string, boolean> {
+  return {
     b1: false, b2: false,
     s1: false, s2: false, s3: false,
     d1: false, d2: false, d3: false,
     c1: false, c2: false
+  };
+}
+
+export default function GuidanceTab() {
+  const [guideChecks, setGuideChecks] = useState<Record<string, boolean>>(() => {
+    // Lazy initialization: read from localStorage synchronously on first render
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return { ...getDefaultChecks(), ...parsed };
+      }
+    } catch (e) {
+      console.error('Failed to load checklist state:', e);
+    }
+    return getDefaultChecks();
   });
+  const [showCompleteAlert, setShowCompleteAlert] = useState(false);
+  const hasShownAlert = useRef(false);
+
+  // Persist to localStorage on every change
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(guideChecks));
+  }, [guideChecks]);
 
   const handleCheckChange = (key: string) => {
     setGuideChecks(prev => ({ ...prev, [key]: !prev[key] }));
@@ -17,6 +43,40 @@ export default function GuidanceTab() {
     const checked = Object.values(guideChecks).filter(Boolean).length;
     return Math.round((checked / total) * 100);
   };
+
+  // Track completion state — sets flag when progress hits 100%
+  useEffect(() => {
+    const progress = getGuideProgress();
+    if (progress === 100 && !hasShownAlert.current) {
+      hasShownAlert.current = true;
+      setShowCompleteAlert(true);
+    }
+    if (progress < 100) {
+      hasShownAlert.current = false;
+    }
+  }, [guideChecks]);
+
+  // Show SweetAlert2 in a separate effect to decouple from state lifecycle
+  useEffect(() => {
+    if (!showCompleteAlert) return;
+    Swal.fire({
+      icon: 'success',
+      title: 'Curing Checklist Complete!',
+      html: '<p style="font-size: 14px; color: #3b2313;">All curing stages have been verified. Your vanilla batch is now aligned with <strong>SNI export standards</strong>.</p>',
+      confirmButtonText: 'OK',
+      confirmButtonColor: '#3b2313',
+      background: '#fbf7ee',
+      color: '#3b2313',
+      iconColor: '#065f46',
+      customClass: {
+        popup: 'rounded-xl border-2',
+        title: 'text-xl font-black',
+        confirmButton: 'rounded-lg font-bold text-sm px-6 py-2',
+      },
+    }).then(() => {
+      setShowCompleteAlert(false);
+    });
+  }, [showCompleteAlert]);
 
   return (
     <div className="space-y-6">

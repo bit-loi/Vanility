@@ -45,7 +45,7 @@ def estimate_batch(req: EstimateRequest):
         conditioning_duration_days=req.conditioning_duration_days
     )
     
-    save_vanilla_batch({
+    batch_data = {
         "farmer_name": req.farmer_name,
         "location_region": req.location_region,
         "pollination_date": req.pollination_date,
@@ -56,8 +56,12 @@ def estimate_batch(req: EstimateRequest):
         "predicted_grade": predicted_grade,
         "confidence_score": confidence_score,
         "quantity_kg_wet": req.quantity_kg_wet,
-        "quantity_kg_dry_estimate": dry_qty
-    })
+        "quantity_kg_dry_estimate": dry_qty,
+    }
+    try:
+        save_vanilla_batch(batch_data)
+    except Exception as e:
+        print(f"Backend save to Supabase skipped (no service_role key): {e}")
     
     return EstimateResponse(
         harvest_status=harvest_status,
