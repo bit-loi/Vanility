@@ -10,6 +10,8 @@ interface HeaderProps {
   lang: 'en' | 'id';
   onToggleLang: () => void;
   onToggleSidebar?: () => void;
+  isBuyerMode: boolean;
+  onToggleMode: () => void;
 }
 
 const headerTranslations = {
@@ -29,7 +31,7 @@ const headerTranslations = {
   }
 };
 
-export default function Header({ activeTab, timeStr, lang, onToggleLang, onToggleSidebar }: HeaderProps) {
+export default function Header({ activeTab, timeStr, lang, onToggleLang, onToggleSidebar, isBuyerMode, onToggleMode }: HeaderProps) {
   const router = useRouter();
   const supabase = createClient();
   const [avatarUrl, setAvatarUrl] = useState('');
@@ -77,35 +79,55 @@ export default function Header({ activeTab, timeStr, lang, onToggleLang, onToggl
         </h1>
       </div>
 
-      <div className="flex items-center space-x-4 text-xs font-bold text-primary-ink">
+      <div className="flex items-center space-x-1.5 sm:space-x-3 md:space-x-4 text-xs font-bold text-primary-ink">
+        {/* Toggle Mode: Jual / Beli */}
+        <div className="flex items-center space-x-1 sm:space-x-2 border-2 border-primary-ink px-1.5 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-card-cream shadow-[1px_1px_0_0_#3b2313]">
+          <span className="font-retro text-[8px] tracking-wider text-accent-gold uppercase leading-none">
+            {lang === 'en' ? 'Mode:' : 'Mode:'}
+          </span>
+          <button
+            onClick={onToggleMode}
+            className={`font-retro text-[8px] cursor-pointer transition-all active:translate-y-0.5 active:shadow-none ${
+              isBuyerMode 
+                ? 'bg-[#3b2313] text-[#fbf7ee] hover:bg-[#4d3221] font-bold px-2 py-0.5 rounded border border-primary-ink' 
+                : 'bg-transparent text-[#3b2313] hover:text-[#4d3221] hover:underline font-bold px-1'
+            }`}
+          >
+            {isBuyerMode 
+              ? (lang === 'en' ? 'BUYER' : 'BELI') 
+              : (lang === 'en' ? 'SELLER' : 'JUAL')
+            }
+          </button>
+        </div>
+
         <button
           onClick={onToggleLang}
-          className="flex items-center px-3 py-1.5 rounded-lg border-2 border-primary-ink bg-card-cream shadow-[1px_1px_0_0_#3b2313] hover:bg-cream-base active:translate-y-0.5 active:shadow-none transition-all cursor-pointer font-retro text-[8px]"
+          className="flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border-2 border-primary-ink bg-card-cream shadow-[1px_1px_0_0_#3b2313] hover:bg-cream-base active:translate-y-0.5 active:shadow-none transition-all cursor-pointer font-retro text-[8px]"
         >
           {lang === 'en' ? 'EN' : 'ID'}
         </button>
 
-        <div className="px-3 py-1.5 rounded-lg border-2 border-primary-ink bg-card-cream shadow-[1px_1px_0_0_#3b2313] font-retro text-[9px] tracking-wider">
+        <div className="hidden md:block px-3 py-1.5 rounded-lg border-2 border-primary-ink bg-card-cream shadow-[1px_1px_0_0_#3b2313] font-retro text-[9px] tracking-wider">
           {timeStr}
         </div>
 
         <button
           onClick={() => router.push('/profile')}
-          className="flex items-center space-x-2 pl-2 hover:opacity-85 transition-opacity"
+          className="flex items-center space-x-2 pl-1 sm:pl-2 hover:opacity-85 transition-opacity"
         >
           {avatarUrl ? (
             <img
               src={avatarUrl}
-              className="w-8 h-8 rounded-full border-2 border-primary-ink object-cover shadow-[1px_1px_0_0_#3b2313]"
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-primary-ink object-cover shadow-[1px_1px_0_0_#3b2313]"
               alt="Avatar"
               referrerPolicy="no-referrer"
             />
           ) : (
-            <div className="w-8 h-8 rounded-full border-2 border-primary-ink bg-[#EAE4D9] flex items-center justify-center font-bold text-sm shadow-[1px_1px_0_0_#3b2313]">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-primary-ink bg-[#EAE4D9] flex items-center justify-center font-bold text-xs sm:text-sm shadow-[1px_1px_0_0_#3b2313]">
               {initial}
             </div>
           )}
-          <span className="font-bold text-xs text-text-dark truncate max-w-[80px]">{displayName}</span>
+          <span className="hidden sm:block font-bold text-xs text-text-dark truncate max-w-[80px]">{displayName}</span>
         </button>
       </div>
     </header>

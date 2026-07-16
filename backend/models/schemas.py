@@ -34,3 +34,28 @@ class PriceReferenceItem(BaseModel):
     grade: str
     price_usd_per_kg_min: float
     price_usd_per_kg_max: float
+
+
+from typing import Optional
+
+class BuyerCriteria(BaseModel):
+    required_grade: str
+    min_quantity_kg: float
+    max_quantity_kg: float
+    preferred_origin: str
+    industry: str
+
+class ToggleBuyerModeRequest(BaseModel):
+    is_active: bool
+    criteria: Optional[BuyerCriteria] = None
+
+class BatchCreateRequest(BaseModel):
+    grade: str
+    quantity_kg: float
+    origin: str
+    harvest_days: int
+    conditioning_days: int
+    export_readiness_score: int
+
+class ContactRequestRequest(BaseModel):
+    batch_id: str

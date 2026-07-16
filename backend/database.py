@@ -21,9 +21,14 @@ _headers = {
 }
 
 
-def supabase_request(method: str, table: str, data: dict = None):
+def supabase_request(method: str, table: str, data: dict = None, jwt_token: str = None):
     url = f"{SUPABASE_REST_URL}/{table}"
+    headers = _headers.copy()
+    if jwt_token:
+        headers["Authorization"] = f"Bearer {jwt_token}"
     with httpx.Client() as client:
-        resp = client.request(method, url, headers=_headers, json=data)
+        resp = client.request(method, url, headers=headers, json=data)
         resp.raise_for_status()
+        if resp.status_code == 204 or not resp.text.strip():
+            return None
         return resp.json()

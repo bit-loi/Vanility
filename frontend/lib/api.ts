@@ -67,3 +67,82 @@ export async function getPriceReferences(): Promise<PriceReferenceItem[]> {
   if (!res.ok) throw new Error('API error fetching price references');
   return res.json();
 }
+
+export async function toggleBuyerMode(token: string, isActive: boolean, criteria?: any): Promise<any> {
+  const res = await fetch(`${API_BASE_URL}/buyer-mode/toggle`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ is_active: isActive, criteria })
+  });
+  if (!res.ok) throw new Error('Failed to toggle buyer mode');
+  return res.json();
+}
+
+export async function postHeartbeat(token: string): Promise<any> {
+  const res = await fetch(`${API_BASE_URL}/buyer-mode/heartbeat`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  if (!res.ok) throw new Error('Failed to pulse heartbeat');
+  return res.json();
+}
+
+export async function getActiveBuyerCount(): Promise<number> {
+  const res = await fetch(`${API_BASE_URL}/buyer-mode/active-count`);
+  if (!res.ok) throw new Error('Failed to get active buyer count');
+  const data = await res.json();
+  return data.active_buyer_count;
+}
+
+export async function getLiveMatches(batchId: string, lang: string): Promise<any> {
+  const res = await fetch(`${API_BASE_URL}/matches/${batchId}?lang=${lang}`);
+  if (!res.ok) throw new Error('Failed to fetch buyer matches');
+  return res.json();
+}
+
+export async function saveBatchToDb(token: string, batchData: any): Promise<any> {
+  const res = await fetch(`${API_BASE_URL}/batches`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(batchData)
+  });
+  if (!res.ok) throw new Error('Failed to save batch to database');
+  return res.json();
+}
+
+export async function getBatchesList(token: string, status?: string, sellerId?: string): Promise<any[]> {
+  let url = `${API_BASE_URL}/batches`;
+  const params: string[] = [];
+  if (status) params.push(`status=${status}`);
+  if (sellerId) params.push(`seller_id=${sellerId}`);
+  if (params.length > 0) url += `?${params.join('&')}`;
+  
+  const res = await fetch(url, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  if (!res.ok) throw new Error('Failed to fetch batches list');
+  return res.json();
+}
+
+export async function createContactRequest(token: string, batchId: string): Promise<any> {
+  const res = await fetch(`${API_BASE_URL}/contact-requests`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ batch_id: batchId })
+  });
+  if (!res.ok) throw new Error('Failed to create contact request');
+  return res.json();
+}

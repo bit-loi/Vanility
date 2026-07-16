@@ -10,6 +10,8 @@ interface OverviewTabProps {
   avgGrade: string;
   userName: string;
   lang: 'en' | 'id';
+  activeBuyerCount: number;
+  isBuyerMode?: boolean;
 }
 
 const overviewTranslations = {
@@ -57,7 +59,7 @@ const overviewTranslations = {
   }
 };
 
-export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrade, userName, lang }: OverviewTabProps) {
+export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrade, userName, lang, activeBuyerCount, isBuyerMode }: OverviewTabProps) {
   const t = overviewTranslations[lang];
 
   const [marketInsight, setMarketInsight] = useState<string>('');
@@ -89,10 +91,11 @@ export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrad
     };
   }, [lang, t.marketText]);
 
-  const totalCount = batches.length;
-  const gradeACount = batches.filter(b => b.grade === 'Grade A').length;
-  const gradeBCount = batches.filter(b => b.grade === 'Grade B').length;
-  const lowGradeCount = batches.filter(b => b.grade === 'Low Grade' || b.grade === 'Grade C' || (!b.grade.includes('A') && !b.grade.includes('B'))).length;
+  const displayBatches = isBuyerMode ? batches.filter(b => b.status === 'Export Ready') : batches;
+  const totalCount = displayBatches.length;
+  const gradeACount = displayBatches.filter(b => b.grade === 'Grade A').length;
+  const gradeBCount = displayBatches.filter(b => b.grade === 'Grade B').length;
+  const lowGradeCount = displayBatches.filter(b => b.grade === 'Low Grade' || b.grade === 'Grade C' || (!b.grade.includes('A') && !b.grade.includes('B'))).length;
 
   const pctA = totalCount > 0 ? (gradeACount / totalCount) * 100 : 0;
   const pctB = totalCount > 0 ? (gradeBCount / totalCount) * 100 : 0;
@@ -105,20 +108,26 @@ export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrad
         <span className="absolute -top-1.5 -right-1.5 text-xs text-primary-ink font-mono leading-none font-bold">+</span>
         <span className="absolute -bottom-1.5 -left-1.5 text-xs text-primary-ink font-mono leading-none font-bold">+</span>
         <span className="absolute -bottom-1.5 -right-1.5 text-xs text-primary-ink font-mono leading-none font-bold">+</span>
-        <p className="font-retro text-[8px] tracking-[0.25em] text-accent-gold mb-2 uppercase">Farmer Decision Support</p>
+        <p className="font-retro text-[8px] tracking-[0.25em] text-accent-gold mb-2 uppercase">
+          {isBuyerMode 
+            ? (lang === 'en' ? 'Global Buyer Dashboard' : 'Dasbor Pembeli Global') 
+            : (lang === 'en' ? 'Farmer Decision Support' : 'Dukungan Keputusan Petani')}
+        </p>
         <h2 className="text-3xl font-light tracking-[-0.045em] text-text-dark mb-1">
-          {t.welcome}, {userName}
+          {t.welcome}, {userName}{isBuyerMode ? ' (Buyer)' : ''}
         </h2>
         <p className="text-sm text-primary-ink/75 max-w-2xl leading-relaxed">
-          {t.tickerSub}
+          {isBuyerMode 
+            ? (lang === 'en' ? 'Welcome to the Buyer Portal. Browse matching vanilla batches and establish premium spice export lines.' : 'Selamat datang di Portal Pembeli. Telusuri batch vanili yang cocok dan jalin jalur ekspor rempah premium.') 
+            : t.tickerSub}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
-          { label: t.batchesTracked, value: batches.length },
-          { label: t.totalWet, value: `${totalWetQty.toFixed(1)} kg` },
-          { label: t.dryYield, value: `${totalDryQty.toFixed(1)} kg` },
+          { label: isBuyerMode ? (lang === 'en' ? 'Batches Available' : 'Batch Tersedia') : t.batchesTracked, value: displayBatches.length },
+          { label: t.totalWet, value: `${(displayBatches.reduce((sum, b) => sum + b.qtyWet, 0)).toFixed(1)} kg` },
+          { label: t.dryYield, value: `${(displayBatches.reduce((sum, b) => sum + b.qtyDry, 0)).toFixed(1)} kg` },
           { label: t.avgGrade, value: avgGrade }
         ].map((kpi, idx) => (
           <div key={idx} className="relative border-2 border-primary-ink p-5 rounded-xl bg-card-cream cartoon-shadow flex flex-col justify-between">
@@ -157,7 +166,7 @@ export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrad
                 </tr>
               </thead>
               <tbody>
-                {batches.map((batch, idx) => (
+                {displayBatches.map((batch, idx) => (
                   <tr key={idx} className="border-b border-primary-ink/10 hover:bg-cream-base/50 transition-colors">
                     <td className="py-3 font-bold text-text-dark">{batch.id}</td>
                     <td className="py-3 font-medium text-text-dark">{batch.name}</td>
@@ -252,6 +261,30 @@ export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrad
           </div>
 
           <div className="space-y-4">
+            {/* Live Presence Counter Card */}
+            <div className="p-4 rounded-lg bg-card-cream border-2 border-primary-ink text-xs leading-relaxed shadow-[2px_2px_0_0_#3b2313] transition-all hover:scale-[1.01]">
+              <p className="font-retro text-[7px] tracking-wider text-accent-gold uppercase mb-2">
+                {lang === 'en' ? 'Live Presence Pool' : 'Kolam Kehadiran Langsung'}
+              </p>
+              <div className="flex items-center space-x-3">
+                <span className="relative flex h-2.5 w-2.5 my-1">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-gold opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent-gold"></span>
+                </span>
+                <div>
+                  <p className="text-xs font-bold text-text-dark">
+                    <span className="text-lg text-accent-gold mr-1 inline-block transition-all duration-300 font-retro">
+                      {activeBuyerCount}
+                    </span> 
+                    {lang === 'en' ? 'Active Buyers Online' : 'Buyer Aktif Sekarang'}
+                  </p>
+                  <p className="text-[9px] text-primary-ink/60 font-mono leading-none mt-1">
+                    {lang === 'en' ? '● Real-time sync enabled' : '● Sinkronisasi real-time aktif'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="p-4 rounded-lg bg-card-cream border-2 border-primary-ink text-xs leading-relaxed shadow-[2px_2px_0_0_#3b2313]">
               <p className="font-retro text-[7px] tracking-wider text-accent-gold uppercase mb-1">{t.alertTitle}</p>
               <p className="text-primary-ink/90 font-medium">{t.alertText}</p>
