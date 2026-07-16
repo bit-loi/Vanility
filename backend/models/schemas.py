@@ -18,6 +18,7 @@ class EstimateResponse(BaseModel):
     quantity_kg_dry_estimate: float
     estimated_price_usd_per_kg_min: float
     estimated_price_usd_per_kg_max: float
+    feature_importances: dict[str, float] = None
 
 class ValueAddRequest(BaseModel):
     quantity_kg_dry: float

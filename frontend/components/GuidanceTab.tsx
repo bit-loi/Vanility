@@ -118,14 +118,14 @@ export default function GuidanceTab() {
             items: [
               { id: 'd1', label: 'Spread vanilla pods under moderate sun for 2 to 3 hours daily.' },
               { id: 'd2', label: 'Cover with canvas during peak afternoon heat.' },
-              { id: 'd3', label: 'Continue drying for 5 to 14 days until beans feel flexible and turn dark brown.' }
+              { id: 'd3', label: 'Continue drying for 15 to 35 days until beans feel flexible and turn dark brown.' }
             ]
           },
           {
             title: '4. Conditioning (Penyimpanan)',
             items: [
               { id: 'c1', label: 'Store standard beans inside closed conditioning boxes lined with wax paper.' },
-              { id: 'c2', label: 'Maintain storage for at least 60 to 90 days to allow aroma compounds to mature.' }
+              { id: 'c2', label: 'Maintain storage for at least 45 days to allow aroma compounds to mature.' }
             ]
           }
         ].map((sec, idx) => (

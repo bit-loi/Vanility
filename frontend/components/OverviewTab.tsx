@@ -30,7 +30,7 @@ const overviewTranslations = {
     tblStatus: 'Status',
     logsTitle: 'Agronomist Insights',
     alertTitle: 'Batch B003 Alert',
-    alertText: 'The sweating duration recorded for Batch B003 was shorter than standard. Maintain sun drying strictly between 5 and 14 days under standard conditions to control microbial growth risk.',
+    alertText: 'The sweating duration recorded for Batch B003 was shorter than standard. Maintain sun drying strictly between 15 and 35 days under standard conditions to control microbial growth risk.',
     marketTitle: 'Market Insight',
     marketText: 'Global demand for premium Grade A vanilla beans has increased. Processing raw beans into high quality cured pods currently increases market value by up to 54 percent per kilogram.'
   },
@@ -51,7 +51,7 @@ const overviewTranslations = {
     tblStatus: 'Status',
     logsTitle: 'Wawasan Agronomis',
     alertTitle: 'Peringatan Batch B003',
-    alertText: 'Durasi sweating yang tercatat untuk Batch B003 lebih singkat dari standar. Jaga durasi pengeringan matahari ketat antara 5 hingga 14 hari di bawah kondisi standar untuk mengendalikan risiko pertumbuhan mikroba.',
+    alertText: 'Durasi sweating yang tercatat untuk Batch B003 lebih singkat dari standar. Jaga durasi pengeringan matahari ketat antara 15 hingga 35 hari di bawah kondisi standar untuk mengendalikan risiko pertumbuhan mikroba.',
     marketTitle: 'Wawasan Pasar',
     marketText: 'Permintaan global untuk biji vanili Grade A premium telah meningkat. Mengolah biji mentah menjadi polong kering berkualitas tinggi saat ini meningkatkan nilai pasar hingga 54 persen per kilogram.'
   }
@@ -59,6 +59,15 @@ const overviewTranslations = {
 
 export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrade, userName, lang }: OverviewTabProps) {
   const t = overviewTranslations[lang];
+
+  const totalCount = batches.length;
+  const gradeACount = batches.filter(b => b.grade === 'Grade A').length;
+  const gradeBCount = batches.filter(b => b.grade === 'Grade B').length;
+  const lowGradeCount = batches.filter(b => b.grade === 'Low Grade' || b.grade === 'Grade C' || (!b.grade.includes('A') && !b.grade.includes('B'))).length;
+
+  const pctA = totalCount > 0 ? (gradeACount / totalCount) * 100 : 0;
+  const pctB = totalCount > 0 ? (gradeBCount / totalCount) * 100 : 0;
+  const pctLow = totalCount > 0 ? (lowGradeCount / totalCount) * 100 : 0;
 
   return (
     <div className="space-y-6">
@@ -158,6 +167,59 @@ export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrad
           <div className="flex justify-between items-center mb-4 border-b-2 border-primary-ink/15 pb-2">
             <h3 className="font-retro text-[9px] tracking-wider text-accent-gold uppercase">{t.logsTitle}</h3>
             <span className="w-2 h-2 rounded-full bg-[#065f46] animate-pulse"></span>
+          </div>
+
+          {/* Grade Distribution Visualization (Koperasi weekly distribution overview) */}
+          <div className="mb-6 pb-6 border-b border-primary-ink/20">
+            <div className="flex justify-between items-center mb-3">
+              <h4 className="font-retro text-[8px] tracking-wider text-accent-gold uppercase">{lang === 'en' ? 'Weekly Grade Distribution' : 'Tren Distribusi Mutu'}</h4>
+              <span className="font-retro text-[7px] text-primary-ink/50 uppercase">{totalCount} {lang === 'en' ? 'Batches Total' : 'Total Batch'}</span>
+            </div>
+            {totalCount > 0 ? (
+              <div className="space-y-3">
+                {/* Horizontal Stacked Bar */}
+                <div className="w-full h-4 border-2 border-primary-ink rounded-lg overflow-hidden flex bg-[#eae4d9] shadow-[1px_1px_0_0_#3b2313]">
+                  {gradeACount > 0 && (
+                    <div 
+                      style={{ width: `${pctA}%` }} 
+                      className="bg-[#065f46] h-full border-r-2 border-primary-ink last:border-r-0"
+                      title={`Grade A: ${gradeACount}`} 
+                    />
+                  )}
+                  {gradeBCount > 0 && (
+                    <div 
+                      style={{ width: `${pctB}%` }} 
+                      className="bg-[#FFF2CC] h-full border-r-2 border-primary-ink last:border-r-0"
+                      title={`Grade B: ${gradeBCount}`} 
+                    />
+                  )}
+                  {lowGradeCount > 0 && (
+                    <div 
+                      style={{ width: `${pctLow}%` }} 
+                      className="bg-[#FCE4D6] h-full border-r-2 border-primary-ink last:border-r-0"
+                      title={`Low Grade: ${lowGradeCount}`} 
+                    />
+                  )}
+                </div>
+                {/* Legend with counts */}
+                <div className="grid grid-cols-3 gap-2 text-[9px] font-bold text-center">
+                  <div className="flex flex-col items-center">
+                    <span className="w-2.5 h-2.5 rounded border border-primary-ink bg-[#065f46] mb-1" />
+                    <span className="text-text-dark whitespace-nowrap">Grade A: {gradeACount} ({Math.round(pctA)}%)</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="w-2.5 h-2.5 rounded border border-primary-ink bg-[#FFF2CC] mb-1" />
+                    <span className="text-text-dark whitespace-nowrap">Grade B: {gradeBCount} ({Math.round(pctB)}%)</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="w-2.5 h-2.5 rounded border border-primary-ink bg-[#FCE4D6] mb-1" />
+                    <span className="text-text-dark whitespace-nowrap">Low: {lowGradeCount} ({Math.round(pctLow)}%)</span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <p className="text-xs text-primary-ink/50 text-center py-2 italic">{lang === 'en' ? 'No batch data available yet' : 'Belum ada data batch'}</p>
+            )}
           </div>
 
           <div className="space-y-4">

@@ -70,7 +70,7 @@ export default function Header({ activeTab, timeStr, lang, onToggleLang, onToggl
             <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <h1 className="font-sans font-light text-lg md:text-2xl tracking-tight text-text-dark leading-none truncate max-w-[160px] sm:max-w-none">
+        <h1 className="font-sans font-light text-lg md:text-2xl tracking-tight text-text-dark leading-normal truncate max-w-[160px] sm:max-w-none">
           {headerTranslations[lang][activeTab]}
         </h1>
       </div>

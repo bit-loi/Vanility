@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from datetime import datetime
 from models.schemas import EstimateRequest, EstimateResponse
-from logic.grading import get_harvest_metrics, generate_recommendations, predict_grade_and_confidence
+from logic.grading import get_harvest_metrics, generate_recommendations, predict_grade_and_confidence, get_feature_importances
 from repository import save_vanilla_batch
 
 router = APIRouter()
@@ -70,5 +70,6 @@ def estimate_batch(req: EstimateRequest):
         recommendations=recs,
         quantity_kg_dry_estimate=dry_qty,
         estimated_price_usd_per_kg_min=price_min,
-        estimated_price_usd_per_kg_max=price_max
+        estimated_price_usd_per_kg_max=price_max,
+        feature_importances=get_feature_importances()
     )

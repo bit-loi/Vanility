@@ -153,7 +153,20 @@ export default function DashboardPage() {
 
   const totalWetQty = batches.reduce((sum, b) => sum + b.qtyWet, 0);
   const totalDryQty = batches.reduce((sum, b) => sum + b.qtyDry, 0);
-  const avgGrade = batches.filter(b => b.grade === 'Grade A').length >= batches.filter(b => b.grade === 'Grade B').length ? 'Grade A' : 'Grade B';
+  let avgGrade = '-';
+  if (batches.length > 0) {
+    const gradeACount = batches.filter(b => b.grade === 'Grade A').length;
+    const gradeBCount = batches.filter(b => b.grade === 'Grade B').length;
+    const lowGradeCount = batches.filter(b => b.grade === 'Low Grade' || b.grade === 'Grade C' || (!b.grade.includes('A') && !b.grade.includes('B'))).length;
+
+    if (gradeACount >= gradeBCount && gradeACount >= lowGradeCount) {
+      avgGrade = 'Grade A';
+    } else if (gradeBCount >= gradeACount && gradeBCount >= lowGradeCount) {
+      avgGrade = 'Grade B';
+    } else {
+      avgGrade = 'Low Grade';
+    }
+  }
 
   if (loading) {
     return (
