@@ -41,13 +41,17 @@ export default function DashboardPage() {
   const [gradeDropdownOpen, setGradeDropdownOpen] = useState<boolean>(false);
   const [selectedGrade, setSelectedGrade] = useState<string>('Grade A');
 
-  const loadBatches = async () => {
+  const loadBatches = async (currentUserId?: string) => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
       if (!token) return;
       
-      const data = await getBatchesList(token);
+      // Only fetch batches belonging to the current user (seller_id filter)
+      const sellerId = currentUserId || userId;
+      if (!sellerId) return;
+      
+      const data = await getBatchesList(token, undefined, sellerId);
       if (data) {
         const mapped: Batch[] = data.map((item: any, idx: number) => ({
           id: `B${String(data.length - idx).padStart(3, '0')}`,
@@ -105,7 +109,8 @@ export default function DashboardPage() {
           console.error("Could not fetch buyer state", err);
         }
 
-        await loadBatches();
+        // Pass the resolved user.id directly so we don't depend on the userId state
+        await loadBatches(user.id);
         setLoading(false);
       }
     }
@@ -233,7 +238,7 @@ export default function DashboardPage() {
     } catch (e: any) {
       console.error("Error auto-saving batch to API:", e.message || e);
     }
-    await loadBatches();
+    await loadBatches(userId || undefined);
   };
 
   const handleSaveBatch = async (batchData: {
@@ -281,7 +286,7 @@ export default function DashboardPage() {
       });
       return;
     }
-    await loadBatches();
+    await loadBatches(userId || undefined);
     setActiveTab('overview');
   };
 

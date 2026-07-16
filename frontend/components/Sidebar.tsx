@@ -218,7 +218,7 @@ export default function Sidebar({ activeTab, setActiveTab, lang, isOpen, onClose
             )}
             <div className="overflow-hidden">
               <p className="text-xs font-bold leading-tight text-text-dark truncate max-w-[90px]">{name}</p>
-              <p className="font-retro text-[5px] tracking-wider text-accent-gold mt-0.5">FARMER USER</p>
+              <p className="font-retro text-[5px] tracking-wider text-accent-gold mt-0.5">{isBuyerMode ? (lang === 'en' ? 'BUYER' : 'PEMBELI') : (lang === 'en' ? 'FARMER USER' : 'PETANI')}</p>
             </div>
           </button>
           <button

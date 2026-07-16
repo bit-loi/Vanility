@@ -175,3 +175,48 @@ def create_contact_request(buyer_id: str, batch_id: str, jwt_token: str = None):
     except Exception as e:
         print(f"Error creating contact request: {e}")
         return False
+
+def get_contact_requests_for_batch(batch_id: str, jwt_token: str = None):
+    """Return all buyers who sent a contact/purchase request for a specific batch,
+    joined with their profile info and buyer mode criteria."""
+    try:
+        # Join profiles via buyer_id FK.
+        # Also join buyer_mode_state (which uses user_id as its FK to profiles/auth.users)
+        # We use a nested select to get buyer criteria.
+        query = (
+            f"contact_requests"
+            f"?select=*,profiles!buyer_id(full_name,company_name,email),buyer_mode_state!inner(industry,required_grade,min_quantity_kg,max_quantity_kg,preferred_origin)"
+            f"&batch_id=eq.{batch_id}"
+            f"&order=created_at.desc"
+        )
+        res = supabase_request("GET", query, jwt_token=jwt_token)
+        if res is not None:
+            return res
+        
+        # Fallback: simpler query without buyer_mode_state join
+        fallback_query = (
+            f"contact_requests"
+            f"?select=*,profiles!buyer_id(full_name,company_name,email)"
+            f"&batch_id=eq.{batch_id}"
+            f"&order=created_at.desc"
+        )
+        res2 = supabase_request("GET", fallback_query, jwt_token=jwt_token)
+        return res2 if res2 else []
+    except Exception as e:
+        print(f"Error fetching contact requests for batch {batch_id}: {e}")
+        # Final fallback: bare query
+        try:
+            simple = supabase_request("GET", f"contact_requests?batch_id=eq.{batch_id}", jwt_token=jwt_token)
+            return simple if simple else []
+        except Exception:
+            return []
+
+
+def get_contact_requests_by_buyer(buyer_id: str, jwt_token: str = None):
+    try:
+        query = f"contact_requests?select=*,batches(*,profiles(*))&buyer_id=eq.{buyer_id}&order=created_at.desc"
+        res = supabase_request("GET", query, jwt_token=jwt_token)
+        return res if res else []
+    except Exception as e:
+        print(f"Error fetching contact requests for buyer {buyer_id}: {e}")
+        return []

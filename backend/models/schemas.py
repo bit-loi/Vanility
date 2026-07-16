@@ -56,6 +56,7 @@ class BatchCreateRequest(BaseModel):
     harvest_days: int
     conditioning_days: int
     export_readiness_score: int
+    status: str = "pending"
 
 class ContactRequestRequest(BaseModel):
     batch_id: str

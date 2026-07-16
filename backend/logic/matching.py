@@ -175,7 +175,7 @@ def generate_llm_explanation(system_prompt: str, user_prompt: str, model: str = 
         "reasoning": {"enabled": False}
     }
 
-    with httpx.Client(timeout=5.0) as client:
+    with httpx.Client(timeout=30.0) as client:
         resp = client.post(url, headers=headers, json=payload)
         resp.raise_for_status()
         data = resp.json()

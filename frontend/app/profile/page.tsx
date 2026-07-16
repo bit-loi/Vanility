@@ -72,7 +72,7 @@ export default function ProfilePage() {
         
         try {
           const { data } = await supabase
-            .from('users')
+            .from('profiles')
             .select('location_region, user_type')
             .eq('id', user.id)
             .single();
@@ -102,9 +102,9 @@ export default function ProfilePage() {
       });
       if (authErr) throw authErr;
 
-      const { error: dbErr } = await supabase.from('users').upsert({
+      const { error: dbErr } = await supabase.from('profiles').upsert({
         id: user.id,
-        name: profileName,
+        full_name: profileName,
         location_region: profileRegion,
         user_type: userType
       });

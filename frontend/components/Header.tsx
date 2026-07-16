@@ -31,6 +31,18 @@ const headerTranslations = {
   }
 };
 
+// Buyer-mode overrides: titles from the buyer's point of view
+const buyerHeaderTranslations: Partial<typeof headerTranslations['en']> = {
+  en: {
+    overview: 'Buyer Overview',
+    matching: 'Find Vanilla Batches'
+  },
+  id: {
+    overview: 'Ikhtisar Pembeli',
+    matching: 'Cari Batch Vanili'
+  }
+} as any;
+
 export default function Header({ activeTab, timeStr, lang, onToggleLang, onToggleSidebar, isBuyerMode, onToggleMode }: HeaderProps) {
   const router = useRouter();
   const supabase = createClient();
@@ -75,7 +87,10 @@ export default function Header({ activeTab, timeStr, lang, onToggleLang, onToggl
           </svg>
         </button>
         <h1 className="font-sans font-light text-lg md:text-2xl tracking-tight text-text-dark leading-normal truncate max-w-[160px] sm:max-w-none">
-          {headerTranslations[lang][activeTab]}
+          {isBuyerMode
+            ? (buyerHeaderTranslations[lang] as any)?.[activeTab] ?? headerTranslations[lang][activeTab]
+            : headerTranslations[lang][activeTab]
+          }
         </h1>
       </div>
 
