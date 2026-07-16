@@ -21,38 +21,31 @@ export default function DashboardPage() {
   const [lang, setLang] = useState<'en' | 'id'>('en');
   const [profileName, setProfileName] = useState('');
   
-  const [batches, setBatches] = useState<Batch[]>([
-    {
-      id: 'B001',
-      name: 'Batch Manggarai Premium',
-      region: 'Manggarai Barat, NTT',
-      date: '2026-07-10',
-      qtyWet: 15.0,
-      qtyDry: 3.8,
-      grade: 'Grade A',
-      status: 'Conditioning'
-    },
-    {
-      id: 'B002',
-      name: 'Batch Ende Curing',
-      region: 'Ende, NTT',
-      date: '2026-07-05',
-      qtyWet: 20.0,
-      qtyDry: 4.8,
-      grade: 'Grade B',
-      status: 'Sun Drying'
-    },
-    {
-      id: 'B003',
-      name: 'Batch Flores Barat',
-      region: 'Manggarai Barat, NTT',
-      date: '2026-07-15',
-      qtyWet: 10.0,
-      qtyDry: 2.2,
-      grade: 'Low Grade',
-      status: 'Sweating'
+  const [batches, setBatches] = useState<Batch[]>([]);
+
+  const loadBatches = async () => {
+    try {
+      const { data } = await supabase
+        .from('vanilla_batches')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (data) {
+        const mapped: Batch[] = data.map((item: any, idx: number) => ({
+          id: `B${String(data.length - idx).padStart(3, '0')}`,
+          name: item.farmer_name,
+          region: item.location_region,
+          date: item.pollination_date,
+          qtyWet: item.quantity_kg_wet,
+          qtyDry: item.quantity_kg_dry_estimate,
+          grade: item.predicted_grade,
+          status: item.curing_method === 'terkontrol' ? 'Controlled' : 'Traditional'
+        }));
+        setBatches(mapped);
+      }
+    } catch (e) {
+      console.error(e);
     }
-  ]);
+  };
 
   useEffect(() => {
     // Read persisted language choice
@@ -67,6 +60,7 @@ export default function DashboardPage() {
         router.push('/login');
       } else {
         setProfileName(user.user_metadata?.full_name || user.email?.split('@')[0] || 'Petani');
+        await loadBatches();
         setLoading(false);
       }
     }
@@ -84,18 +78,8 @@ export default function DashboardPage() {
     return () => clearInterval(timer);
   }, []);
 
-  const handleSaveBatch = (name: string, region: string, wetQty: number, dryQty: number, grade: string) => {
-    const newBatch: Batch = {
-      id: `B${String(batches.length + 1).padStart(3, '0')}`,
-      name,
-      region,
-      date: new Date().toISOString().split('T')[0],
-      qtyWet: wetQty,
-      qtyDry: dryQty,
-      grade,
-      status: 'Verification'
-    };
-    setBatches([newBatch, ...batches]);
+  const handleSaveBatch = async (name: string, region: string, wetQty: number, dryQty: number, grade: string) => {
+    await loadBatches();
     setActiveTab('overview');
   };
 

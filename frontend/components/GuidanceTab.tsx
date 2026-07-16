@@ -79,12 +79,23 @@ export default function GuidanceTab() {
             <div className="space-y-3">
               {sec.items.map(item => (
                 <label key={item.id} className="flex items-start space-x-3 text-xs cursor-pointer select-none font-medium">
-                  <input
-                    type="checkbox"
-                    checked={guideChecks[item.id]}
-                    onChange={() => handleCheckChange(item.id)}
-                    className="mt-0.5 border-2 border-primary-ink text-primary-ink rounded focus:ring-0 w-4 h-4 cursor-pointer"
-                  />
+                  <div className="relative flex items-center justify-center mt-0.5">
+                    <input
+                      type="checkbox"
+                      checked={guideChecks[item.id]}
+                      onChange={() => handleCheckChange(item.id)}
+                      className="sr-only"
+                    />
+                    <div className={`w-4 h-4 border-2 border-primary-ink rounded flex items-center justify-center transition-all shadow-[1px_1px_0_0_#3b2313] active:translate-y-0.5 active:shadow-none ${
+                      guideChecks[item.id] ? 'bg-primary-ink text-card-cream' : 'bg-white'
+                    }`}>
+                      {guideChecks[item.id] && (
+                        <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </div>
+                  </div>
                   <span className={guideChecks[item.id] ? 'line-through text-primary-ink/40 font-normal' : 'text-primary-ink/90'}>{item.label}</span>
                 </label>
               ))}
