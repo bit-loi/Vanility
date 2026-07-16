@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '../utils/supabase/client';
 
 interface HeaderProps {
-  activeTab: 'overview' | 'estimator' | 'calculator' | 'guidance';
+  activeTab: 'overview' | 'estimator' | 'calculator' | 'guidance' | 'matching';
   timeStr: string;
   lang: 'en' | 'id';
   onToggleLang: () => void;
@@ -17,13 +17,15 @@ const headerTranslations = {
     overview: 'Overview',
     estimator: 'Maturity & Grade Assessment',
     calculator: 'Value Addition Calculator',
-    guidance: 'Curing Guidance Checklist'
+    guidance: 'Curing Guidance Checklist',
+    matching: 'Export Buyer Matching'
   },
   id: {
     overview: 'Ikhtisar',
     estimator: 'Penilaian Kematangan & Mutu',
     calculator: 'Kalkulator Nilai Tambah',
-    guidance: 'Panduan Verifikasi Curing'
+    guidance: 'Panduan Verifikasi Curing',
+    matching: 'Pencocokan Buyer Ekspor'
   }
 };
 

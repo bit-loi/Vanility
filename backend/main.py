@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from routers import estimate, price_reference, value_add
+from routers import estimate, price_reference, value_add, buyer_match
 
 load_dotenv()
 
@@ -22,6 +22,7 @@ app.add_middleware(
 app.include_router(estimate.router, prefix="/api", tags=["Estimate"])
 app.include_router(price_reference.router, prefix="/api", tags=["Price Reference"])
 app.include_router(value_add.router, prefix="/api", tags=["Value Add"])
+app.include_router(buyer_match.router, prefix="/api", tags=["Buyer Match"])
 
 @app.get("/")
 def read_root():

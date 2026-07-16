@@ -10,6 +10,7 @@ import OverviewTab from '../../components/OverviewTab';
 import EstimatorTab from '../../components/EstimatorTab';
 import CalculatorTab from '../../components/CalculatorTab';
 import GuidanceTab from '../../components/GuidanceTab';
+import MatchingTab from '../../components/MatchingTab';
 import { Batch } from '../../components/types';
 
 export default function DashboardPage() {
@@ -17,7 +18,7 @@ export default function DashboardPage() {
   const supabase = createClient();
   const [loading, setLoading] = useState(true);
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'estimator' | 'calculator' | 'guidance'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'estimator' | 'calculator' | 'guidance' | 'matching'>('overview');
   const [timeStr, setTimeStr] = useState('13.17.04');
   const [lang, setLang] = useState<'en' | 'id'>('en');
   const [profileName, setProfileName] = useState('');
@@ -34,6 +35,7 @@ export default function DashboardPage() {
       if (data) {
         const mapped: Batch[] = data.map((item: any, idx: number) => ({
           id: `B${String(data.length - idx).padStart(3, '0')}`,
+          dbId: item.id,
           name: item.farmer_name,
           region: item.location_region,
           date: item.pollination_date,
@@ -219,6 +221,10 @@ export default function DashboardPage() {
 
           {activeTab === 'guidance' && (
             <GuidanceTab />
+          )}
+
+          {activeTab === 'matching' && (
+            <MatchingTab batches={batches} lang={lang} />
           )}
         </main>
       </div>

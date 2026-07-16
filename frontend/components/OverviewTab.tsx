@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Batch } from './types';
 
 interface OverviewTabProps {
@@ -59,6 +59,35 @@ const overviewTranslations = {
 
 export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrade, userName, lang }: OverviewTabProps) {
   const t = overviewTranslations[lang];
+
+  const [marketInsight, setMarketInsight] = useState<string>('');
+  const [loadingInsight, setLoadingInsight] = useState<boolean>(true);
+
+  useEffect(() => {
+    let active = true;
+    async function fetchInsight() {
+      setLoadingInsight(true);
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/market-insight?lang=${lang}`);
+        if (!res.ok) throw new Error('API error');
+        const data = await res.json();
+        if (active) {
+          setMarketInsight(data.insight);
+          setLoadingInsight(false);
+        }
+      } catch (err) {
+        console.error(err);
+        if (active) {
+          setMarketInsight(t.marketText);
+          setLoadingInsight(false);
+        }
+      }
+    }
+    fetchInsight();
+    return () => {
+      active = false;
+    };
+  }, [lang, t.marketText]);
 
   const totalCount = batches.length;
   const gradeACount = batches.filter(b => b.grade === 'Grade A').length;
@@ -229,7 +258,15 @@ export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrad
             </div>
             <div className="p-4 rounded-lg bg-card-cream border-2 border-primary-ink text-xs leading-relaxed shadow-[2px_2px_0_0_#3b2313]">
               <p className="font-retro text-[7px] tracking-wider text-accent-gold uppercase mb-1">{t.marketTitle}</p>
-              <p className="text-primary-ink/90 font-medium">{t.marketText}</p>
+              <p className="text-primary-ink/90 font-medium">
+                {loadingInsight ? (
+                  <span className="animate-pulse text-accent-gold font-retro text-[7px] tracking-wider block">
+                    {lang === 'en' ? 'Fetching Live Insights...' : 'Mengambil Data Pasar...'}
+                  </span>
+                ) : (
+                  marketInsight
+                )}
+              </p>
             </div>
           </div>
         </div>
