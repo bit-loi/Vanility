@@ -1,8 +1,20 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui;
+  --font-retro: var(--font-retro), monospace;
+  --color-primary-ink: #3b2313;
+  --color-accent-gold: #75662c;
+  --color-accent-bronze: #a88256;
+  --color-cream-base: #efeee7;
+  --color-card-cream: #fbf7ee;
+  --color-hero-olive: #393308;
+  --color-text-dark: #111827;
+}
+
 :root {
-  --background: #F7F4EB;
-  --foreground: #2C1E15;
+  --background: #efeee7;
+  --foreground: #3b2313;
 }
 
 body {
@@ -10,22 +22,54 @@ body {
   color: var(--foreground);
 }
 
-.wireframe-border {
-  border: 1px solid #2C1E15;
+.cartoon-shadow {
+  box-shadow: 3px 3px 0 0 #3b2313;
 }
 
-.wireframe-double-border {
-  border: 3px double #2C1E15;
+.cartoon-shadow-lg {
+  box-shadow: 5px 5px 0 0 #3b2313;
 }
 
-.wireframe-bg-card {
-  background-color: #FAF8F5;
+.cartoon-btn {
+  background-color: #fbf7ee;
+  border: 2px solid #3b2313;
+  color: #3b2313;
+  box-shadow: 0 3px 0 0 #3b2313;
+  transition: all 0.15s ease-in-out;
 }
 
-.wireframe-bg-sidebar {
-  background-color: #FAF8F5;
+.cartoon-btn:hover {
+  transform: translateY(-2px);
 }
 
-.wireframe-bg-header {
-  background-color: #FAF8F5;
+.cartoon-btn:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.cartoon-shine-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.cartoon-shine-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  transition: none;
+}
+
+.cartoon-shine-container:hover::after {
+  left: 150%;
+  transition: all 0.6s ease-in-out;
 }

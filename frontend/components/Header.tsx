@@ -7,16 +7,16 @@ interface HeaderProps {
 
 export default function Header({ activeTab, timeStr }: HeaderProps) {
   return (
-    <header className="h-16 border-b border-[#2C1E15] bg-[#FAF8F5] px-8 flex items-center justify-between">
-      <h1 className="text-sm font-extrabold tracking-widest uppercase text-[#2C1E15]/70">
+    <header className="h-16 border-b border-primary-ink bg-card-cream px-8 flex items-center justify-between">
+      <h1 className="font-sans font-light text-2xl tracking-tight text-text-dark leading-none">
         {activeTab === 'overview' && 'Overview'}
         {activeTab === 'estimator' && 'Maturity & Grade Estimator'}
         {activeTab === 'calculator' && 'Value Addition Calculator'}
         {activeTab === 'guidance' && 'Curing Guidance Checklist'}
       </h1>
 
-      <div className="flex items-center space-x-4 text-xs font-semibold">
-        <div className="flex items-center px-3 py-1.5 rounded-full border border-[#2C1E15] bg-[#FAF8F5]">
+      <div className="flex items-center space-x-4 text-xs font-bold text-primary-ink">
+        <div className="flex items-center px-3 py-1.5 rounded-lg border-2 border-primary-ink bg-card-cream shadow-[1px_1px_0_0_#3b2313]">
           <svg className="w-3.5 h-3.5 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="12" cy="12" r="5" />
             <line x1="12" y1="1" x2="12" y2="3" />
@@ -28,27 +28,27 @@ export default function Header({ activeTab, timeStr }: HeaderProps) {
             <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
           </svg>
-          <span>MGR 26°C</span>
+          <span className="font-retro text-[8px]">MGR 26C</span>
         </div>
 
-        <div className="flex items-center px-3 py-1.5 rounded-full border border-[#2C1E15] bg-[#FAF8F5]">
+        <div className="flex items-center px-3 py-1.5 rounded-lg border-2 border-primary-ink bg-card-cream shadow-[1px_1px_0_0_#3b2313]">
           <svg className="w-3.5 h-3.5 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="12" cy="12" r="10" />
             <line x1="2" y1="12" x2="22" y2="12" />
             <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
           </svg>
-          <span>EN</span>
+          <span className="font-retro text-[8px]">EN</span>
         </div>
 
-        <div className="px-3 py-1.5 rounded-full border border-[#2C1E15] bg-[#FAF8F5] font-mono tracking-wider">
+        <div className="px-3 py-1.5 rounded-lg border-2 border-primary-ink bg-card-cream shadow-[1px_1px_0_0_#3b2313] font-retro text-[9px] tracking-wider">
           {timeStr}
         </div>
 
         <div className="flex items-center space-x-2 pl-2">
-          <div className="w-8 h-8 rounded-full border border-[#2C1E15] bg-[#EAE4D9] flex items-center justify-center font-bold">
+          <div className="w-8 h-8 rounded-full border-2 border-primary-ink bg-[#EAE4D9] flex items-center justify-center font-bold text-sm shadow-[1px_1px_0_0_#3b2313]">
             Y
           </div>
-          <span className="font-bold text-xs text-[#2C1E15]">Pak Yuven</span>
+          <span className="font-bold text-xs text-text-dark">Pak Yuven</span>
         </div>
       </div>
     </header>

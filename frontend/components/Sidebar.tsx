@@ -7,16 +7,19 @@ interface SidebarProps {
 
 export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   return (
-    <aside className="w-64 border-r border-[#2C1E15] bg-[#FAF8F5] flex flex-col justify-between p-6">
+    <aside className="w-64 border-r border-primary-ink bg-card-cream flex flex-col justify-between p-6">
       <div>
-        <div className="flex items-center mb-8 pb-4 border-b border-[#2C1E15]/20">
-          <svg className="w-8 h-8 mr-2 text-[#2C1E15]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <div className="flex items-center mb-8 pb-4 border-b border-primary-ink/20">
+          <svg className="w-8 h-8 mr-2 text-primary-ink" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M2 22C2 22 8 20 12 16C16 12 22 2 22 2C22 2 12 8 8 12C4 16 2 22 2 22Z" />
             <path d="M12 16L8 12" />
             <path d="M17 11L13 7" />
             <path d="M7 21L3 17" />
           </svg>
-          <span className="text-xl font-bold tracking-wider">VANILITY</span>
+          <div className="flex flex-col">
+            <span className="text-xl font-black tracking-tight leading-none text-text-dark">VANILITY</span>
+            <span className="font-retro text-[7px] tracking-[0.2em] text-accent-gold mt-1">GH7.0 SYSTEM</span>
+          </div>
         </div>
 
         <nav className="space-y-2">
@@ -24,8 +27,8 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
             onClick={() => setActiveTab('overview')}
             className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg border transition-all ${
               activeTab === 'overview'
-                ? 'bg-[#2C1E15] text-[#FAF8F5] border-[#2C1E15]'
-                : 'hover:bg-[#EAE4D9] border-transparent text-[#2C1E15]'
+                ? 'bg-primary-ink text-card-cream border-primary-ink cartoon-shadow'
+                : 'hover:bg-cream-base border-transparent text-primary-ink'
             }`}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -41,8 +44,8 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
             onClick={() => setActiveTab('estimator')}
             className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg border transition-all ${
               activeTab === 'estimator'
-                ? 'bg-[#2C1E15] text-[#FAF8F5] border-[#2C1E15]'
-                : 'hover:bg-[#EAE4D9] border-transparent text-[#2C1E15]'
+                ? 'bg-primary-ink text-card-cream border-primary-ink cartoon-shadow'
+                : 'hover:bg-cream-base border-transparent text-primary-ink'
             }`}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -55,8 +58,8 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
             onClick={() => setActiveTab('calculator')}
             className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg border transition-all ${
               activeTab === 'calculator'
-                ? 'bg-[#2C1E15] text-[#FAF8F5] border-[#2C1E15]'
-                : 'hover:bg-[#EAE4D9] border-transparent text-[#2C1E15]'
+                ? 'bg-primary-ink text-card-cream border-primary-ink cartoon-shadow'
+                : 'hover:bg-cream-base border-transparent text-primary-ink'
             }`}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -73,8 +76,8 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
             onClick={() => setActiveTab('guidance')}
             className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg border transition-all ${
               activeTab === 'guidance'
-                ? 'bg-[#2C1E15] text-[#FAF8F5] border-[#2C1E15]'
-                : 'hover:bg-[#EAE4D9] border-transparent text-[#2C1E15]'
+                ? 'bg-primary-ink text-card-cream border-primary-ink cartoon-shadow'
+                : 'hover:bg-cream-base border-transparent text-primary-ink'
             }`}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -86,17 +89,17 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         </nav>
       </div>
 
-      <div className="border-t border-[#2C1E15]/20 pt-4 flex items-center justify-between">
+      <div className="border-t border-primary-ink/20 pt-4 flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-full border border-[#2C1E15] bg-[#EAE4D9] flex items-center justify-center font-bold text-lg">
+          <div className="w-10 h-10 rounded-full border-2 border-primary-ink bg-[#EAE4D9] flex items-center justify-center font-bold text-lg text-primary-ink shadow-[1px_1px_0_0_#3b2313]">
             Y
           </div>
           <div>
-            <p className="text-sm font-bold leading-tight">Pak Yuven</p>
-            <p className="text-xs text-[#2C1E15]/60 leading-none">Farmer Admin</p>
+            <p className="text-sm font-bold leading-tight text-text-dark">Pak Yuven</p>
+            <p className="font-retro text-[6px] tracking-wider text-accent-gold mt-0.5">FARMER ADMIN</p>
           </div>
         </div>
-        <button className="p-1.5 hover:bg-[#EAE4D9] rounded-lg transition-colors border border-transparent">
+        <button className="p-1.5 hover:bg-[#EAE4D9] rounded-lg transition-colors border border-transparent text-primary-ink">
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
             <polyline points="16 17 21 12 16 7" />
