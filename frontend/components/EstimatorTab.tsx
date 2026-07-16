@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { estimateBatch } from '../lib/api';
 
 interface EstimatorTabProps {
   onSaveBatch: (name: string, region: string, wetQty: number, dryQty: number, grade: string) => void;
@@ -25,119 +26,40 @@ export default function EstimatorTab({ onSaveBatch }: EstimatorTabProps) {
     recommendations: string[];
   } | null>(null);
 
-  const handleEstimateSubmit = (e: React.FormEvent) => {
+  const handleEstimateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!estPollinationDate) return;
 
-    const pollDate = new Date(estPollinationDate);
-    const today = new Date();
-    const diffTime = Math.abs(today.getTime() - pollDate.getTime());
-    const daysSincePollination = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    try {
+      const data = await estimateBatch({
+        farmer_name: estName || 'Pak Yuven',
+        location_region: estRegion,
+        pollination_date: estPollinationDate,
+        curing_method: estCuringMethod,
+        sweating_duration_days: estSweatingDays,
+        sun_drying_duration_days: estDryingDays,
+        conditioning_duration_days: estConditioningDays,
+        quantity_kg_wet: estWetQty
+      });
 
-    let harvestScore = 2;
-    let harvestStatus = 'Ideal Maturity';
+      const pollDate = new Date(estPollinationDate);
+      const today = new Date();
+      const diffTime = Math.abs(today.getTime() - pollDate.getTime());
+      const daysSincePollination = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    if (daysSincePollination < 120) {
-      harvestStatus = 'Too Early';
-      harvestScore = 0;
-    } else if (daysSincePollination < 210) {
-      harvestStatus = 'Approaching Maturity';
-      harvestScore = 1;
-    } else if (daysSincePollination <= 270) {
-      harvestStatus = 'Ideal Maturity';
-      harvestScore = 2;
-    } else {
-      harvestStatus = 'Overmature';
-      harvestScore = 1;
+      setEstResult({
+        daysSincePollination,
+        harvestStatus: data.harvest_status,
+        predictedGrade: data.predicted_grade,
+        confidence: Math.round(data.confidence_score * 100),
+        dryQtyEstimate: data.quantity_kg_dry_estimate,
+        priceMin: data.estimated_price_usd_per_kg_min,
+        priceMax: data.estimated_price_usd_per_kg_max,
+        recommendations: data.recommendations
+      });
+    } catch (err) {
+      console.error(err);
     }
-
-    let sweatingScore = 0;
-    if (estSweatingDays === 0) {
-      sweatingScore = 0;
-    } else if (estCuringMethod === 'terkontrol' && estSweatingDays >= 4 && estSweatingDays <= 8) {
-      sweatingScore = 2;
-    } else if (estCuringMethod === 'tradisional' && estSweatingDays >= 10 && estSweatingDays <= 15) {
-      sweatingScore = 2;
-    } else if (estSweatingDays > 0) {
-      sweatingScore = 1;
-    }
-
-    let dryingScore = 0;
-    if (estDryingDays === 0) {
-      dryingScore = 0;
-    } else if (estDryingDays >= 5 && estDryingDays <= 14) {
-      dryingScore = 2;
-    } else if (estDryingDays >= 15 && estDryingDays <= 25) {
-      dryingScore = 1;
-    } else {
-      dryingScore = 0;
-    }
-
-    let conditioningScore = 0;
-    if (estConditioningDays >= 60) {
-      conditioningScore = 2;
-    } else if (estConditioningDays >= 30) {
-      conditioningScore = 1;
-    } else {
-      conditioningScore = 0;
-    }
-
-    const totalScore = harvestScore + sweatingScore + dryingScore + conditioningScore;
-    let predictedGrade = 'Low Grade';
-    let confidence = 0.5;
-
-    if (totalScore >= 6) {
-      predictedGrade = 'Grade A';
-      confidence = 0.85 + (totalScore - 6) * 0.05;
-    } else if (totalScore >= 3) {
-      predictedGrade = 'Grade B';
-      confidence = 0.60 + (totalScore - 3) * 0.05;
-    } else {
-      predictedGrade = 'Low Grade';
-      confidence = 0.50 + totalScore * 0.03;
-    }
-
-    if (harvestScore === 0) {
-      predictedGrade = 'Low Grade';
-      confidence = Math.min(confidence, 0.55);
-    }
-
-    let priceMin = 40;
-    let priceMax = 80;
-    if (predictedGrade === 'Grade A') {
-      priceMin = 180;
-      priceMax = 220;
-    } else if (predictedGrade === 'Grade B') {
-      priceMin = 110;
-      priceMax = 150;
-    }
-
-    const dryQtyEstimate = Number((estWetQty * 0.25).toFixed(1));
-
-    const recommendations: string[] = [];
-    if (harvestScore < 2) {
-      recommendations.push('Wait for flower pollination age of 7 to 9 months for optimal vanillin content.');
-    }
-    if (sweatingScore < 2) {
-      recommendations.push('Maintain sweating for 10 to 15 days (traditional) or 4 to 8 days (controlled).');
-    }
-    if (dryingScore < 2) {
-      recommendations.push('Keep drying duration within 5 to 14 days under alternating sun and shade.');
-    }
-    if (conditioningScore < 2) {
-      recommendations.push('Condition in sealed container boxes for at least 60 days before selling.');
-    }
-
-    setEstResult({
-      daysSincePollination,
-      harvestStatus,
-      predictedGrade,
-      confidence: Math.round(confidence * 100),
-      dryQtyEstimate,
-      priceMin,
-      priceMax,
-      recommendations
-    });
   };
 
   const handleSave = () => {

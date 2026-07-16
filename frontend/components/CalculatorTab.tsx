@@ -1,23 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { calculateValueAdd } from '../lib/api';
 
 export default function CalculatorTab() {
   const [calcQty, setCalcQty] = useState(10);
   const [calcGrade, setCalcGrade] = useState<'Grade A' | 'Grade B' | 'Low Grade'>('Grade A');
 
-  const getCalcResults = () => {
-    let rawPrice = 60;
-    if (calcGrade === 'Grade A') rawPrice = 175;
-    else if (calcGrade === 'Grade B') rawPrice = 130;
+  const [rawIncome, setRawIncome] = useState(1750);
+  const [extractIncome, setExtractIncome] = useState(2700);
+  const [gap, setGap] = useState(950);
+  const [pct, setPct] = useState(54);
 
-    const rawIncome = calcQty * rawPrice;
-    const extractIncome = calcQty * 270;
-    const gap = extractIncome - rawIncome;
-    const pct = rawIncome > 0 ? Math.round((gap / rawIncome) * 100) : 0;
+  useEffect(() => {
+    let active = true;
+    async function fetchData() {
+      try {
+        const data = await calculateValueAdd({
+          quantity_kg_dry: calcQty || 0,
+          predicted_grade: calcGrade
+        });
+        if (active) {
+          setRawIncome(data.raw_bean_income_usd);
+          setExtractIncome(data.extract_income_usd);
+          setGap(data.value_add_gap_usd);
+          setPct(data.value_add_gap_percentage);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    fetchData();
+    return () => {
+      active = false;
+    };
+  }, [calcQty, calcGrade]);
 
-    return { rawIncome, extractIncome, gap, pct };
-  };
-
-  const calcRes = getCalcResults();
+  const calcRes = { rawIncome, extractIncome, gap, pct };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
