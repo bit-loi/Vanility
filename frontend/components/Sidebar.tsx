@@ -13,13 +13,13 @@ interface SidebarProps {
 const sidebarTranslations = {
   en: {
     overview: 'Overview',
-    estimator: 'Maturity Estimator',
+    estimator: 'Grade Assessment',
     calculator: 'Value Add Calc',
     guidance: 'Curing Guidance'
   },
   id: {
     overview: 'Ikhtisar Dasbor',
-    estimator: 'Estimator Mutu',
+    estimator: 'Penilaian Mutu',
     calculator: 'Nilai Tambah',
     guidance: 'Panduan Curing'
   }

@@ -14,13 +14,13 @@ interface HeaderProps {
 const headerTranslations = {
   en: {
     overview: 'Overview',
-    estimator: 'Maturity & Grade Estimator',
+    estimator: 'Maturity & Grade Assessment',
     calculator: 'Value Addition Calculator',
     guidance: 'Curing Guidance Checklist'
   },
   id: {
     overview: 'Ikhtisar',
-    estimator: 'Estimator Kematangan & Mutu',
+    estimator: 'Penilaian Kematangan & Mutu',
     calculator: 'Kalkulator Nilai Tambah',
     guidance: 'Panduan Verifikasi Curing'
   }

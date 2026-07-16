@@ -15,7 +15,7 @@ interface OverviewTabProps {
 const overviewTranslations = {
   en: {
     welcome: 'Good afternoon',
-    tickerSub: 'Here is your AI powered vanilla production dashboard. Standardize harvesting and curing processes to double your value-add.',
+    tickerSub: 'Here is your decision support dashboard for vanilla production. Standardize harvesting and curing processes to double your value-add.',
     batchesTracked: 'Batches Tracked',
     totalWet: 'Total Qty (Wet)',
     dryYield: 'Potential Dry Yield',
@@ -28,7 +28,7 @@ const overviewTranslations = {
     tblQty: 'Qty (Wet/Dry)',
     tblGrade: 'Grade',
     tblStatus: 'Status',
-    logsTitle: 'AI Agronomist logs',
+    logsTitle: 'Agronomist Insights',
     alertTitle: 'Batch B003 Alert',
     alertText: 'The sweating duration recorded for Batch B003 was shorter than standard. Maintain sun drying strictly between 5 and 14 days under standard conditions to control microbial growth risk.',
     marketTitle: 'Market Insight',
@@ -36,7 +36,7 @@ const overviewTranslations = {
   },
   id: {
     welcome: 'Selamat sore',
-    tickerSub: 'Ini adalah dasbor produksi vanili bertenaga AI Anda. Standardisasi proses panen dan curing untuk melipatgandakan nilai tambah Anda.',
+    tickerSub: 'Ini adalah dasbor pendukung keputusan produksi vanili Anda. Standardisasi proses panen dan curing untuk melipatgandakan nilai tambah Anda.',
     batchesTracked: 'Batch Dipantau',
     totalWet: 'Total Kuantitas (Basah)',
     dryYield: 'Potensi Hasil Kering',
@@ -49,7 +49,7 @@ const overviewTranslations = {
     tblQty: 'Kuantitas (Basah/Kering)',
     tblGrade: 'Mutu',
     tblStatus: 'Status',
-    logsTitle: 'Catatan Agronomis AI',
+    logsTitle: 'Wawasan Agronomis',
     alertTitle: 'Peringatan Batch B003',
     alertText: 'Durasi sweating yang tercatat untuk Batch B003 lebih singkat dari standar. Jaga durasi pengeringan matahari ketat antara 5 hingga 14 hari di bawah kondisi standar untuk mengendalikan risiko pertumbuhan mikroba.',
     marketTitle: 'Wawasan Pasar',
@@ -67,7 +67,7 @@ export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrad
         <span className="absolute -top-1.5 -right-1.5 text-xs text-primary-ink font-mono leading-none font-bold">+</span>
         <span className="absolute -bottom-1.5 -left-1.5 text-xs text-primary-ink font-mono leading-none font-bold">+</span>
         <span className="absolute -bottom-1.5 -right-1.5 text-xs text-primary-ink font-mono leading-none font-bold">+</span>
-        <p className="font-retro text-[8px] tracking-[0.25em] text-accent-gold mb-2 uppercase">System Welcome Ticker</p>
+        <p className="font-retro text-[8px] tracking-[0.25em] text-accent-gold mb-2 uppercase">Farmer Decision Support</p>
         <h2 className="text-3xl font-light tracking-[-0.045em] text-text-dark mb-1">
           {t.welcome}, {userName}
         </h2>

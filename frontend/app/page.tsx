@@ -29,10 +29,10 @@ export default function LandingPage() {
 
           <span className="font-retro text-[8px] tracking-[0.25em] text-accent-gold uppercase block mb-3">Empowering Smallholders</span>
           <h1 className="text-3xl md:text-5xl font-black text-text-dark leading-tight uppercase mb-4">
-            AI-Powered Harvest & Curing Estimator
+            Decision Support System for Vanilla Farmers
           </h1>
           <p className="text-sm md:text-md text-primary-ink/80 max-w-2xl mx-auto leading-relaxed mb-6">
-            Indonesia is the second largest global producer of vanilla, yet captures minimal export value because crops are sold raw. Vanility solves the curing knowledge gap to maximize your earnings.
+            Indonesia is the second largest global producer of vanilla, yet captures minimal export value because crops are sold raw. Vanility translates SNI grading standards and IPB curing research into a structured digital tool — no lab required.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -40,7 +40,7 @@ export default function LandingPage() {
               onClick={() => router.push('/login')}
               className="px-8 py-3 bg-primary-ink text-card-cream border-2 border-primary-ink font-bold text-sm rounded-xl shadow-[3px_3px_0_0_#75662c] hover:opacity-90 active:translate-y-0.5 active:shadow-none transition-all"
             >
-              START BATCH ESTIMATION
+              START GRADE ASSESSMENT
             </button>
             <a
               href="#features"
@@ -63,9 +63,9 @@ export default function LandingPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
               </svg>
             </div>
-            <h3 className="font-bold text-lg text-text-dark uppercase mb-2">Grade Estimator</h3>
+            <h3 className="font-bold text-lg text-text-dark uppercase mb-2">Grade Assessment</h3>
             <p className="text-xs text-primary-ink/80 leading-relaxed">
-              Calculate expected vanilla grades based on pollination logs and precise sweating, drying, and conditioning durations.
+              Estimate harvest maturity and bean grade from pollination logs and curing durations — powered by SNI-standard rules and a trained ML model.
             </p>
           </div>
 
