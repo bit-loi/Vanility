@@ -2,7 +2,7 @@
 
 Vanility is a platform that helps Indonesian vanilla farmers produce export grade vanilla and connect directly with global buyers. The goal is simple: help farmers earn more by skipping middlemen and selling premium cured vanilla at fair prices.
 
-Garuda Hacks 7.0 July 2026
+Garuda Hacks 7.0 — July 2026
 
 ---
 
@@ -364,3 +364,7 @@ Built for Garuda Hacks 7.0.
 
 * Garuda Hacks Official Website: https://www.garudahacks.com/
 * Garuda Hacks 7.0 Devpost: https://gh7.devpost.com/
+
+---
+
+**Frontend:** [https://vanility.vercel.app/](https://vanility.vercel.app/)
