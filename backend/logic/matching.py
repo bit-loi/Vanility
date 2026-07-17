@@ -209,13 +209,16 @@ def get_advisor_explanation(batch: dict, buyer_match: dict, lang: str = "en") ->
     # Construct prompt contexts
     system_prompt = (
         "You are an expert Indonesian vanilla export consultant advising local farmers on buyer matching. "
-        "Strict rule: ONLY explain the data provided. DO NOT make any outside assumptions or invent numbers not in the input. "
-        "Keep your response strictly to 1 or 2 short paragraphs (~60-100 words). "
+        "Strict rules:\n"
+        "1. Write the explanation as a single, smooth, cohesive paragraph. DO NOT use lists, dashes, bullet points, or numbering.\n"
+        "2. ONLY explain the data provided. DO NOT make any outside assumptions or invent numbers not in the input.\n"
+        "3. DO NOT mention 'Batch B003' or 'B003' unless it is part of the batch info.\n"
+        "Keep your response strictly to 1 or 2 short paragraphs (~60-100 words)."
     )
     if lang == "id":
-        system_prompt += "Write your explanation in professional Indonesian."
+        system_prompt += " Write your explanation in professional Indonesian."
     else:
-        system_prompt += "Write your explanation in professional English."
+        system_prompt += " Write your explanation in professional English."
 
     user_prompt = (
         f"Vanilla Batch Info:\n"
@@ -235,12 +238,14 @@ def get_advisor_explanation(batch: dict, buyer_match: dict, lang: str = "en") ->
 
     # Attempt primary model
     try:
-        return generate_llm_explanation(system_prompt, user_prompt, model="nvidia/nemotron-3-nano-30b-a3b:free")
+        explanation = generate_llm_explanation(system_prompt, user_prompt, model="nvidia/nemotron-3-nano-30b-a3b:free")
+        return explanation.replace("- ", "").replace("\n-", "").strip()
     except Exception as e:
         print(f"OpenRouter primary model failed: {e}. Trying fallback model...")
         # Attempt fallback model
         try:
-            return generate_llm_explanation(system_prompt, user_prompt, model="nvidia/nemotron-nano-9b-v2:free")
+            explanation = generate_llm_explanation(system_prompt, user_prompt, model="nvidia/nemotron-nano-9b-v2:free")
+            return explanation.replace("- ", "").replace("\n-", "").strip()
         except Exception as e2:
             print(f"OpenRouter fallback model failed: {e2}. Returning static translation.")
             return fallback_text

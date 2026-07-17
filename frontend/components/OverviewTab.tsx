@@ -31,8 +31,8 @@ const overviewTranslations = {
     tblGrade: 'Grade',
     tblStatus: 'Status',
     logsTitle: 'Agronomist Insights',
-    alertTitle: 'Batch B003 Alert',
-    alertText: 'The sweating duration recorded for Batch B003 was shorter than standard. Maintain sun drying strictly between 15 and 35 days under standard conditions to control microbial growth risk.',
+    alertTitle: 'Batch Curing Compliance',
+    alertText: 'Maintain sweating duration between 3 to 8 days, and sun drying strictly between 15 and 35 days under standard conditions to control microbial growth risk and optimize final grade.',
     marketTitle: 'Market Insight',
     marketText: 'Global demand for premium Grade A vanilla beans has increased. Processing raw beans into high quality cured pods currently increases market value by up to 54 percent per kilogram.'
   },
@@ -52,8 +52,8 @@ const overviewTranslations = {
     tblGrade: 'Mutu',
     tblStatus: 'Status',
     logsTitle: 'Wawasan Agronomis',
-    alertTitle: 'Peringatan Batch B003',
-    alertText: 'Durasi sweating yang tercatat untuk Batch B003 lebih singkat dari standar. Jaga durasi pengeringan matahari ketat antara 15 hingga 35 hari di bawah kondisi standar untuk mengendalikan risiko pertumbuhan mikroba.',
+    alertTitle: 'Kepatuhan Curing Batch',
+    alertText: 'Jaga durasi sweating antara 3 hingga 8 hari, dan pengeringan matahari ketat antara 15 hingga 35 hari di bawah kondisi standar untuk mengendalikan risiko pertumbuhan mikroba.',
     marketTitle: 'Wawasan Pasar',
     marketText: 'Permintaan global untuk biji vanili Grade A premium telah meningkat. Mengolah biji mentah menjadi polong kering berkualitas tinggi saat ini meningkatkan nilai pasar hingga 54 persen per kilogram.'
   }
@@ -66,17 +66,32 @@ export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrad
   const [loadingInsight, setLoadingInsight] = useState<boolean>(true);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loadingTx, setLoadingTx] = useState<boolean>(false);
+  const [dynamicAlert, setDynamicAlert] = useState<{ title: string; text: string } | null>(null);
 
   useEffect(() => {
     let active = true;
     async function fetchInsight() {
       setLoadingInsight(true);
       try {
-        const res = await fetch(`http://127.0.0.1:8000/api/market-insight?lang=${lang}`);
+        const { createClient } = await import('../utils/supabase/client');
+        const supabase = createClient();
+        const { data: { session } } = await supabase.auth.getSession();
+        const token = session?.access_token;
+        const headers: Record<string, string> = {};
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        
+        const res = await fetch(`http://127.0.0.1:8000/api/market-insight?lang=${lang}`, {
+          headers
+        });
         if (!res.ok) throw new Error('API error');
         const data = await res.json();
         if (active) {
           setMarketInsight(data.insight);
+          if (data.alert_title && data.alert_text) {
+            setDynamicAlert({ title: data.alert_title, text: data.alert_text });
+          }
           setLoadingInsight(false);
         }
       } catch (err) {
@@ -453,12 +468,14 @@ export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrad
 
             <div className="p-4 rounded-lg bg-card-cream border-2 border-primary-ink text-xs leading-relaxed shadow-[2px_2px_0_0_#3b2313]">
               <p className="font-retro text-[7px] tracking-wider text-accent-gold uppercase mb-1">
-                {isBuyerMode ? (lang === 'en' ? 'Buyer Procurement Guideline' : 'Panduan Pengadaan Buyer') : t.alertTitle}
+                {isBuyerMode 
+                  ? (lang === 'en' ? 'Buyer Procurement Guideline' : 'Panduan Pengadaan Buyer') 
+                  : (dynamicAlert?.title ?? t.alertTitle)}
               </p>
               <p className="text-primary-ink/90 font-medium">
                 {isBuyerMode 
                   ? (lang === 'en' ? 'Before confirming transactions, verify that the moisture content is strictly below 30% for export compliance. Check the curing checklists provided by farmers.' : 'Sebelum mengonfirmasi transaksi, pastikan kadar air vanili berada di bawah 30% untuk kepatuhan ekspor. Periksa checklist proses curing yang disediakan petani.')
-                  : t.alertText}
+                  : (dynamicAlert?.text ?? t.alertText)}
               </p>
             </div>
             <div className="p-4 rounded-lg bg-card-cream border-2 border-primary-ink text-xs leading-relaxed shadow-[2px_2px_0_0_#3b2313]">
