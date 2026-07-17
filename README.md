@@ -108,6 +108,59 @@ The model was initially trained on synthetic data because real field data from I
 
 ---
 
+## Demo Screenshots
+
+Here are some screenshots showcasing the core features and design of the Vanility platform.
+
+### Farmer & Seller Mode
+
+#### 1. Farmer Dashboard Overview (Seller Mode)
+The seller dashboard gives farmers key metrics (Batches Tracked, Total Qty (Wet), Potential Dry Yield, Average Grade), active vanilla batches, live buyer availability, and AI-powered Market Insights.
+
+![Farmer Dashboard Overview (Top)](frontend/public/demo/Screenshot%202026-07-17%20151645.png)
+![Farmer Dashboard Overview (Bottom)](frontend/public/demo/Screenshot%202026-07-17%20151658.png)
+
+#### 2. Maturity & Grade Assessment
+Allows farmers to input production data (region, pollination date, harvest quantity, curing method, and curing step durations). It predicts the final grade (e.g., Grade A) with confidence levels, estimates dried yield, and calculates market value in USD.
+
+![Maturity & Grade Assessment](frontend/public/demo/Screenshot%202026-07-17%20151610.png)
+
+#### 3. Value Addition Calculator
+An interactive financial tool comparing raw cured bean sales directly against processing them into pure vanilla extract or paste, highlighting potential value increase.
+
+![Value Addition Calculator](frontend/public/demo/Screenshot%202026-07-17%20151741.png)
+
+#### 4. Curing Guidance Checklist
+An interactive step-by-step checklist aligned with SNI export standards (Blanching, Sweating, Sun Drying, and Conditioning).
+
+![Curing Guidance Checklist](frontend/public/demo/Screenshot%202026-07-17%20151809.png)
+
+#### 5. Export Buyer Matching
+Scores farmer batches against active buyers using grading, quantity, origin, and industry alignment. Displays compatibility score, export readiness score, and LLM-powered recommendations.
+
+![Export Buyer Matching](frontend/public/demo/Screenshot%202026-07-17%20152054.png)
+
+---
+
+### Buyer Mode
+
+#### 1. Buyer Match Criteria Configuration
+A configuration screen where buyers enter their target criteria (required grade, quantity range, preferred origin, and industry profile) to start matching with seller batches.
+
+![Buyer Match Criteria Configuration](frontend/public/demo/Screenshot%202026-07-17%20151908.png)
+
+#### 2. Batch Marketplace
+A marketplace view where buyers can browse available export-ready vanilla batches from verified farmers, with details on wet and dry quantities, and directly request to purchase.
+
+![Batch Marketplace](frontend/public/demo/Screenshot%202026-07-17%20152012.png)
+
+#### 3. Buyer Dashboard Overview
+The buyer portal dashboard showing deal metrics (Initiated Deals, Total Qty Bought, Average Grade), purchase distribution graphs, active buyers count, and the deal log tracking pending/completed purchase requests.
+
+![Buyer Dashboard Overview](frontend/public/demo/Screenshot%202026-07-17%20152038.png)
+
+---
+
 ## Architecture
 
 The project has two main components:
