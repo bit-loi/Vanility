@@ -41,17 +41,25 @@ export default function DashboardPage() {
   const [gradeDropdownOpen, setGradeDropdownOpen] = useState<boolean>(false);
   const [selectedGrade, setSelectedGrade] = useState<string>('Grade A');
 
-  const loadBatches = async (currentUserId?: string) => {
+  const loadBatches = async (currentUserId?: string, modeBuyer?: boolean) => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
       if (!token) return;
       
-      // Only fetch batches belonging to the current user (seller_id filter)
-      const sellerId = currentUserId || userId;
-      if (!sellerId) return;
+      const buyerModeActive = modeBuyer !== undefined ? modeBuyer : isBuyerMode;
+      let data;
       
-      const data = await getBatchesList(token, undefined, sellerId);
+      if (buyerModeActive) {
+        // In Buyer Mode: fetch all export_ready batches from all sellers
+        data = await getBatchesList(token, 'export_ready', undefined);
+      } else {
+        // In Seller Mode: fetch only own batches
+        const sellerId = currentUserId || userId;
+        if (!sellerId) return;
+        data = await getBatchesList(token, undefined, sellerId);
+      }
+      
       if (data) {
         const mapped: Batch[] = data.map((item: any, idx: number) => ({
           id: `B${String(data.length - idx).padStart(3, '0')}`,
@@ -85,12 +93,14 @@ export default function DashboardPage() {
         setUserId(user.id);
         setProfileName(user.user_metadata?.full_name || user.email?.split('@')[0] || 'Petani');
         
+        let modeState: any = null;
         try {
-          const { data: modeState } = await supabase
+          const { data } = await supabase
             .from('buyer_mode_state')
             .select('*')
             .eq('user_id', user.id)
             .maybeSingle();
+          modeState = data;
             
           if (modeState) {
             setIsBuyerMode(modeState.is_active);
@@ -111,12 +121,18 @@ export default function DashboardPage() {
         }
 
         // Pass the resolved user.id directly so we don't depend on the userId state
-        await loadBatches(user.id);
+        await loadBatches(user.id, modeState?.is_active);
         setLoading(false);
       }
     }
     checkUser();
   }, [router]);
+
+  useEffect(() => {
+    if (userId) {
+      loadBatches(userId, isBuyerMode);
+    }
+  }, [userId, isBuyerMode]);
 
   // Supabase Presence Sync
   useEffect(() => {
