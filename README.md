@@ -304,6 +304,49 @@ CREATE TABLE IF NOT EXISTS contact_requests (
 
 ---
 
+## Deployment Guide
+
+### Backend (Docker + GHCR + Railway)
+
+We use **GitHub Container Registry (GHCR)** to build and host the backend Docker image, which can then be deployed to **Railway** (or any server of your choice).
+
+#### 1. GitHub Actions Automations (GHCR)
+The repository contains a GitHub Actions workflow in `.github/workflows/deploy-backend.yml` that triggers on push to the `main` or `master` branch (when changes occur in the `backend/` folder).
+- It builds the lightweight Docker image using `backend/Dockerfile` based on `python:3.12-slim`.
+- It pushes the image to GitHub Packages: `ghcr.io/<your-github-username>/vanility-backend:latest`.
+
+#### 2. Local Docker Build
+If you want to build and run the backend Docker image locally:
+```bash
+cd backend
+docker build -t vanility-backend .
+docker run -p 8000:8000 --env-file .env vanility-backend
+```
+
+#### 3. Railway Deployment
+1. Log in to Railway and create a new project.
+2. Select **"Deploy from Image Registry"**.
+3. Use the GHCR image URL: `ghcr.io/<your-github-username>/vanility-backend:latest`.
+4. Configure the following environment variables on Railway:
+   - `SUPABASE_URL`
+   - `SUPABASE_KEY`
+   - `ALLOWED_ORIGINS` (Point this to your Vercel frontend URL, e.g., `https://your-app.vercel.app`)
+   - `OPENROUTER_API_KEY` (Optional)
+5. Railway will automatically inject the `PORT` variable, which our Dockerfile binds to dynamically.
+
+### Frontend (Vercel)
+
+The Next.js frontend is fully optimized for **Vercel**:
+
+1. Import your repository into Vercel.
+2. Set the root directory of your project to `frontend/`.
+3. Add the following **Environment Variables** in Vercel settings:
+   - `NEXT_PUBLIC_SUPABASE_URL` (Your Supabase project URL)
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` (Your Supabase anon key)
+4. Click **Deploy**. Vercel will build and host the application statically and route dynamically.
+
+---
+
 ## Target Impact
 
 * Individual farmers gain actionable harvest timing and curing guidance without needing a laboratory.
