@@ -71,7 +71,7 @@ def get_batch_matches(
         
     # Map batch format for matching engine
     mapped_batch = {
-        "predicted_grade": batch.get("grade", "Low Grade"),
+        "predicted_grade": "Grade C" if batch.get("grade") == "Low Grade" else batch.get("grade", "Grade C"),
         "quantity_kg_dry_estimate": float(batch.get("quantity_kg", 0.0)),
         "location_region": batch.get("origin", ""),
         "curing_method": "terkontrol" if "terkontrol" in batch.get("origin", "").lower() else "tradisional"
@@ -86,10 +86,11 @@ def get_batch_matches(
     raw_buyer_pool: list = []
     
     # a) Live/active buyers from presence heartbeat table
+    seller_id = batch.get("seller_id")
     active_buyers_raw = get_active_buyers_data(jwt_token=token)
     for item in active_buyers_raw:
         bid = item.get("user_id")
-        if bid and bid != user_id and bid not in seen_buyer_ids:
+        if bid and bid != user_id and bid != seller_id and bid not in seen_buyer_ids:
             seen_buyer_ids.add(bid)
             raw_buyer_pool.append(("heartbeat", item))
     
@@ -97,7 +98,7 @@ def get_batch_matches(
     contact_requests_raw = get_contact_requests_for_batch(batch_id, jwt_token=token)
     for cr in contact_requests_raw:
         bid = cr.get("buyer_id")
-        if bid and bid != user_id and bid not in seen_buyer_ids:
+        if bid and bid != user_id and bid != seller_id and bid not in seen_buyer_ids:
             seen_buyer_ids.add(bid)
             profiles_data = cr.get("profiles") or {}
             # buyer_mode_state may be a dict (inner join) or list depending on Supabase response
@@ -164,7 +165,7 @@ def get_batch_matches(
         top_match["explanation"] = explanation
         
     # Calculate readiness score
-    predicted_grade = batch.get("grade", "Low Grade")
+    predicted_grade = "Grade C" if batch.get("grade") == "Low Grade" else batch.get("grade", "Grade C")
     readiness = 50
     if predicted_grade == "Grade A":
         readiness = 90

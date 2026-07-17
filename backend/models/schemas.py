@@ -1,14 +1,15 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Optional
 
 class EstimateRequest(BaseModel):
     farmer_name: str
     location_region: str
     pollination_date: str
     curing_method: str
-    sweating_duration_days: int
-    sun_drying_duration_days: int
-    conditioning_duration_days: int
-    quantity_kg_wet: float
+    sweating_duration_days: int = Field(..., ge=1, le=15)
+    sun_drying_duration_days: int = Field(..., ge=1, le=60)
+    conditioning_duration_days: int = Field(..., ge=1, le=150)
+    quantity_kg_wet: float = Field(..., ge=0.1, le=5000.0)
 
 class EstimateResponse(BaseModel):
     harvest_status: str
@@ -19,6 +20,7 @@ class EstimateResponse(BaseModel):
     estimated_price_usd_per_kg_min: float
     estimated_price_usd_per_kg_max: float
     feature_importances: dict[str, float] = None
+    warning_message: Optional[str] = None
 
 class ValueAddRequest(BaseModel):
     quantity_kg_dry: float
@@ -36,7 +38,7 @@ class PriceReferenceItem(BaseModel):
     price_usd_per_kg_max: float
 
 
-from typing import Optional
+
 
 class BuyerCriteria(BaseModel):
     required_grade: str

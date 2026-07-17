@@ -19,7 +19,7 @@ def get_vanilla_batch(batch_id: str, jwt_token: str = None):
             # matching.py expects 'quantity_kg_dry_estimate'
             row["quantity_kg_dry_estimate"] = float(row.get("quantity_kg", 0.0))
             row["location_region"] = row.get("origin", "")
-            row["predicted_grade"] = row.get("grade", "Low Grade")
+            row["predicted_grade"] = "Grade C" if row.get("grade") == "Low Grade" else row.get("grade", "Grade C")
             row["curing_method"] = "terkontrol" if "terkontrol" in row.get("origin", "").lower() else "tradisional"
             return row
         return None

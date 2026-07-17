@@ -1,7 +1,13 @@
 from fastapi import APIRouter, HTTPException
 from datetime import datetime
 from models.schemas import EstimateRequest, EstimateResponse
-from logic.grading import get_harvest_metrics, generate_recommendations, predict_grade_and_confidence, get_feature_importances
+from logic.grading import (
+    get_harvest_metrics,
+    generate_recommendations,
+    predict_grade_and_confidence,
+    get_feature_importances,
+    check_out_of_distribution
+)
 from repository import save_vanilla_batch
 
 router = APIRouter()
@@ -45,6 +51,15 @@ def estimate_batch(req: EstimateRequest):
         conditioning_duration_days=req.conditioning_duration_days
     )
     
+    warning = None
+    if check_out_of_distribution(
+        days_since_pollination=days_since_pollination,
+        sweating_duration_days=req.sweating_duration_days,
+        sun_drying_duration_days=req.sun_drying_duration_days,
+        conditioning_duration_days=req.conditioning_duration_days
+    ):
+        warning = "⚠️ Input di luar rentang data pelatihan — confidence prediksi mungkin lebih rendah."
+
     batch_data = {
         "farmer_name": req.farmer_name,
         "location_region": req.location_region,
@@ -69,5 +84,6 @@ def estimate_batch(req: EstimateRequest):
         quantity_kg_dry_estimate=dry_qty,
         estimated_price_usd_per_kg_min=price_min,
         estimated_price_usd_per_kg_max=price_max,
-        feature_importances=get_feature_importances()
+        feature_importances=get_feature_importances(),
+        warning_message=warning
     )

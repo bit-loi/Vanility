@@ -271,7 +271,22 @@ export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrad
                       const region = tx.batches?.origin || 'Unknown';
                       const qtyDry = `${tx.batches?.quantity_kg || 0} kg`;
                       const grade = tx.batches?.grade || 'Grade A';
-                      const statusDisplay = tx.status === 'requested' ? (lang === 'en' ? 'Connecting' : 'Menghubungkan') : tx.status;
+                      const statusDisplay = tx.status === 'requested' 
+                        ? (lang === 'en' ? 'Requested' : 'Diajukan') 
+                        : tx.status === 'responded' 
+                        ? (lang === 'en' ? 'Responded' : 'Ditanggapi') 
+                        : tx.status === 'completed' 
+                        ? (lang === 'en' ? 'Completed' : 'Selesai') 
+                        : tx.status;
+                      
+                      const statusDotColor = tx.status === 'requested'
+                        ? 'bg-accent-gold'
+                        : tx.status === 'responded'
+                        ? 'bg-[#3b82f6]'
+                        : tx.status === 'completed'
+                        ? 'bg-[#065f46]'
+                        : 'bg-primary-ink/40';
+
                       return (
                         <tr key={idx} className="border-b border-primary-ink/10 hover:bg-cream-base/50 transition-colors">
                           <td className="py-3 font-bold text-text-dark">{dealId}</td>
@@ -291,7 +306,7 @@ export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrad
                           </td>
                           <td className="py-3">
                             <span className="inline-flex items-center text-xs font-bold">
-                              <span className="w-2.5 h-2.5 rounded-full bg-accent-gold border border-primary-ink mr-2"></span>
+                              <span className={`w-2.5 h-2.5 rounded-full ${statusDotColor} border border-primary-ink mr-2`}></span>
                               {statusDisplay}
                             </span>
                           </td>
@@ -388,7 +403,7 @@ export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrad
                     <div 
                       style={{ width: `${pctLow}%` }} 
                       className="bg-[#FCE4D6] h-full border-r-2 border-primary-ink last:border-r-0"
-                      title={`Low Grade: ${lowGradeCount}`} 
+                      title={`Grade C: ${lowGradeCount}`} 
                     />
                   )}
                 </div>
@@ -403,7 +418,7 @@ export default function OverviewTab({ batches, totalWetQty, totalDryQty, avgGrad
                   </div>
                   <div className="flex flex-col items-center">
                     <span className="w-2.5 h-2.5 rounded border border-primary-ink bg-[#FCE4D6] mb-1" />
-                    <span className="text-text-dark whitespace-nowrap">Low: {lowGradeCount} ({Math.round(pctLow)}%)</span>
+                    <span className="text-text-dark whitespace-nowrap">Grade C: {lowGradeCount} ({Math.round(pctLow)}%)</span>
                   </div>
                 </div>
               </div>

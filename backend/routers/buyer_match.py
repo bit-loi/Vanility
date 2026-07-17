@@ -22,7 +22,7 @@ def match_buyers(batch_id: int, lang: str = Query("en", regex="^(en|id)$")):
         }
     
     # 3. Calculate export readiness score based on grade and confidence
-    predicted_grade = batch.get("predicted_grade", "Low Grade")
+    predicted_grade = "Grade C" if batch.get("predicted_grade") == "Low Grade" else batch.get("predicted_grade", "Grade C")
     confidence = batch.get("confidence_score", 0.50)
     
     if predicted_grade == "Grade A":

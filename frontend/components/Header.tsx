@@ -32,7 +32,7 @@ const headerTranslations = {
 };
 
 // Buyer-mode overrides: titles from the buyer's point of view
-const buyerHeaderTranslations: Partial<typeof headerTranslations['en']> = {
+const buyerHeaderTranslations: Record<'en' | 'id', Partial<typeof headerTranslations['en']>> = {
   en: {
     overview: 'Buyer Overview',
     matching: 'Find Vanilla Batches'
@@ -41,7 +41,7 @@ const buyerHeaderTranslations: Partial<typeof headerTranslations['en']> = {
     overview: 'Ikhtisar Pembeli',
     matching: 'Cari Batch Vanili'
   }
-} as any;
+};
 
 export default function Header({ activeTab, timeStr, lang, onToggleLang, onToggleSidebar, isBuyerMode, onToggleMode }: HeaderProps) {
   const router = useRouter();

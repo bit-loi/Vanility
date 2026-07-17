@@ -22,6 +22,7 @@ export interface EstimateResponseData {
   estimated_price_usd_per_kg_min: number;
   estimated_price_usd_per_kg_max: number;
   feature_importances?: Record<string, number>;
+  warning_message?: string;
 }
 
 export interface ValueAddRequestData {

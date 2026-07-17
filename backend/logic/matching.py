@@ -80,7 +80,7 @@ BUYERS = [
         "company_name": "Global Spice Trade",
         "country": "Singapore",
         "industry": "Food Flavoring",
-        "required_grade": "Low Grade",
+        "required_grade": "Grade C",
         "min_quantity_kg": 200.0,
         "max_quantity_kg": 2000.0,
         "preferred_origin": "NTT",
@@ -104,12 +104,18 @@ BUYERS = [
 # Task 2: Rule-Based Matching Engine
 def score_buyer_compatibility(batch: dict, buyer: dict) -> int:
     score = 0
-    batch_grade = batch.get("predicted_grade", "Low Grade")
+    batch_grade = batch.get("predicted_grade", "Grade C")
+    if batch_grade == "Low Grade":
+        batch_grade = "Grade C"
+        
     batch_qty = batch.get("quantity_kg_dry_estimate", 0.0)
     batch_region = batch.get("location_region", "")
 
     # 1. Grade match (+40 exact, +15 close A<->B)
     buyer_grade = buyer["required_grade"]
+    if buyer_grade == "Low Grade":
+        buyer_grade = "Grade C"
+        
     if batch_grade == buyer_grade:
         score += 40
     elif (batch_grade == "Grade A" and buyer_grade == "Grade B") or (batch_grade == "Grade B" and buyer_grade == "Grade A"):
@@ -133,7 +139,7 @@ def score_buyer_compatibility(batch: dict, buyer: dict) -> int:
         industry_fit = True
     elif buyer_ind in ["Bakery"] and batch_grade == "Grade B":
         industry_fit = True
-    elif buyer_ind in ["Food Flavoring"] and batch_grade == "Low Grade":
+    elif buyer_ind in ["Food Flavoring"] and batch_grade == "Grade C":
         industry_fit = True
 
     if industry_fit:
@@ -214,7 +220,7 @@ def get_advisor_explanation(batch: dict, buyer_match: dict, lang: str = "en") ->
     user_prompt = (
         f"Vanilla Batch Info:\n"
         f"- Location Origin: {batch.get('location_region', 'Unknown')}\n"
-        f"- Predicted Grade: {batch.get('predicted_grade', 'Low Grade')}\n"
+        f"- Predicted Grade: {batch.get('predicted_grade', 'Grade C') if batch.get('predicted_grade') != 'Low Grade' else 'Grade C'}\n"
         f"- Dry Quantity: {batch.get('quantity_kg_dry_estimate', 0.0)} kg\n"
         f"- Curing Method: {batch.get('curing_method', 'traditional')}\n\n"
         f"Export Buyer Info:\n"

@@ -95,9 +95,10 @@ export default function DashboardPage() {
           if (modeState) {
             setIsBuyerMode(modeState.is_active);
             if (modeState.required_grade) {
-              setSelectedGrade(modeState.required_grade);
+              const normalizedGrade = modeState.required_grade === 'Low Grade' ? 'Grade C' : modeState.required_grade;
+              setSelectedGrade(normalizedGrade);
               setBuyerCriteria({
-                required_grade: modeState.required_grade,
+                required_grade: normalizedGrade,
                 min_quantity_kg: Number(modeState.min_quantity_kg),
                 max_quantity_kg: Number(modeState.max_quantity_kg),
                 preferred_origin: modeState.preferred_origin,
@@ -309,7 +310,7 @@ export default function DashboardPage() {
     } else if (gradeBCount >= gradeACount && gradeBCount >= lowGradeCount) {
       avgGrade = 'Grade B';
     } else {
-      avgGrade = 'Low Grade';
+      avgGrade = 'Grade C';
     }
   }
 
@@ -450,7 +451,7 @@ export default function DashboardPage() {
 
                   {gradeDropdownOpen && (
                     <div className="absolute right-0 left-0 mt-1 border-2 border-primary-ink bg-white rounded-lg shadow-[3px_3px_0_0_#3b2313] z-[99999] overflow-hidden">
-                      {['Grade A', 'Grade B', 'Low Grade'].map((grade) => (
+                      {['Grade A', 'Grade B', 'Grade C'].map((grade) => (
                         <button
                           key={grade}
                           type="button"
@@ -458,8 +459,8 @@ export default function DashboardPage() {
                             setSelectedGrade(grade);
                             setGradeDropdownOpen(false);
                           }}
-                          className={`w-full px-3 py-2 text-left text-xs font-bold transition-colors border-b border-primary-ink/10 last:border-0 block hover:bg-cream-base text-primary-ink ${
-                            selectedGrade === grade ? 'bg-primary-ink text-card-cream' : ''
+                          className={`w-full px-3 py-2 text-left text-xs font-bold transition-colors border-b border-primary-ink/10 last:border-0 block ${
+                            selectedGrade === grade ? 'bg-primary-ink text-card-cream' : 'hover:bg-cream-base text-primary-ink'
                           }`}
                         >
                           {grade}

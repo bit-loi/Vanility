@@ -3,7 +3,7 @@ import { calculateValueAdd } from '../lib/api';
 
 export default function CalculatorTab() {
   const [calcQty, setCalcQty] = useState(10);
-  const [calcGrade, setCalcGrade] = useState<'Grade A' | 'Grade B' | 'Low Grade'>('Grade A');
+  const [calcGrade, setCalcGrade] = useState<'Grade A' | 'Grade B' | 'Grade C'>('Grade A');
   const [isGradeOpen, setIsGradeOpen] = useState(false);
 
   const [rawIncome, setRawIncome] = useState(1750);
@@ -77,12 +77,12 @@ export default function CalculatorTab() {
 
             {isGradeOpen && (
               <div className="absolute left-0 right-0 mt-1.5 border-2 border-primary-ink bg-white rounded-lg shadow-[3px_3px_0_0_#3b2313] z-10 overflow-hidden">
-                {['Grade A', 'Grade B', 'Low Grade'].map((g) => (
+                {['Grade A', 'Grade B', 'Grade C'].map((g) => (
                   <button
                     key={g}
                     type="button"
                     onClick={() => {
-                      setCalcGrade(g as 'Grade A' | 'Grade B' | 'Low Grade');
+                      setCalcGrade(g as 'Grade A' | 'Grade B' | 'Grade C');
                       setIsGradeOpen(false);
                     }}
                     className={`w-full px-3 py-2 text-left text-sm font-bold transition-colors border-b border-primary-ink/10 last:border-0 ${

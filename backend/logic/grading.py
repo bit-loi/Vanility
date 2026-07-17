@@ -114,7 +114,7 @@ def predict_grade_and_confidence(
             elif pred == "B":
                 predicted_grade = "Grade B"
             else:
-                predicted_grade = "Low Grade"
+                predicted_grade = "Grade C"
             
             prob = model.predict_proba(X_new)[0]
             classes = model.classes_
@@ -158,7 +158,7 @@ def predict_grade_and_confidence(
         conditioning_score = 0
         
     total_score = harvest_score + sweating_score + drying_score + conditioning_score
-    predicted_grade = "Low Grade"
+    predicted_grade = "Grade C"
     confidence = 0.50
     
     if total_score >= 6:
@@ -168,11 +168,11 @@ def predict_grade_and_confidence(
         predicted_grade = "Grade B"
         confidence = 0.60 + (total_score - 3) * 0.05
     else:
-        predicted_grade = "Low Grade"
+        predicted_grade = "Grade C"
         confidence = 0.50 + total_score * 0.03
         
     if harvest_score == 0:
-        predicted_grade = "Low Grade"
+        predicted_grade = "Grade C"
         confidence = min(confidence, 0.55)
         
     return predicted_grade, float(round(confidence, 2))
@@ -194,3 +194,19 @@ def get_feature_importances() -> dict[str, float]:
         "total_curing_duration_days": 0.03,
         "curing_method_terkontrol": 0.02
     }
+
+def check_out_of_distribution(
+    days_since_pollination: int,
+    sweating_duration_days: int,
+    sun_drying_duration_days: int,
+    conditioning_duration_days: int
+) -> bool:
+    if not (180 <= days_since_pollination <= 280):
+        return True
+    if not (3 <= sweating_duration_days <= 10):
+        return True
+    if not (10 <= sun_drying_duration_days <= 40):
+        return True
+    if not (30 <= conditioning_duration_days <= 90):
+        return True
+    return False

@@ -52,6 +52,7 @@ export default function EstimatorTab({ onSaveBatch, onSaveBatchAuto }: Estimator
     priceMin: number;
     priceMax: number;
     recommendations: string[];
+    warningMessage?: string;
   } | null>(null);
 
   const handleEstimateSubmit = async (e: React.FormEvent) => {
@@ -83,7 +84,8 @@ export default function EstimatorTab({ onSaveBatch, onSaveBatchAuto }: Estimator
         dryQtyEstimate: data.quantity_kg_dry_estimate,
         priceMin: data.estimated_price_usd_per_kg_min,
         priceMax: data.estimated_price_usd_per_kg_max,
-        recommendations: data.recommendations
+        recommendations: data.recommendations,
+        warningMessage: data.warning_message
       });
 
       Swal.fire({
@@ -233,7 +235,9 @@ export default function EstimatorTab({ onSaveBatch, onSaveBatchAuto }: Estimator
               <label className="block font-bold mb-1 text-text-dark">Harvest Quantity (Wet kg)</label>
               <input
                 type="number"
-                min="1"
+                min="0.1"
+                max="5000"
+                step="any"
                 value={estWetQty || ''}
                 onChange={e => setEstWetQty(Number(e.target.value))}
                 required
@@ -294,7 +298,8 @@ export default function EstimatorTab({ onSaveBatch, onSaveBatchAuto }: Estimator
                 <label className="block text-xs font-bold mb-1 text-primary-ink/70">Sweating</label>
                 <input
                   type="number"
-                  min="0"
+                  min="1"
+                  max="15"
                   value={estSweatingDays || ''}
                   onChange={e => setEstSweatingDays(Number(e.target.value))}
                   className="w-full px-3 py-2 border-2 border-primary-ink rounded-lg bg-white text-primary-ink focus:outline-none"
@@ -304,7 +309,8 @@ export default function EstimatorTab({ onSaveBatch, onSaveBatchAuto }: Estimator
                 <label className="block text-xs font-bold mb-1 text-primary-ink/70">Sun Drying</label>
                 <input
                   type="number"
-                  min="0"
+                  min="1"
+                  max="60"
                   value={estDryingDays || ''}
                   onChange={e => setEstDryingDays(Number(e.target.value))}
                   className="w-full px-3 py-2 border-2 border-primary-ink rounded-lg bg-white text-primary-ink focus:outline-none"
@@ -314,12 +320,31 @@ export default function EstimatorTab({ onSaveBatch, onSaveBatchAuto }: Estimator
                 <label className="block text-xs font-bold mb-1 text-primary-ink/70">Conditioning</label>
                 <input
                   type="number"
-                  min="0"
+                  min="1"
+                  max="150"
                   value={estConditioningDays || ''}
                   onChange={e => setEstConditioningDays(Number(e.target.value))}
                   className="w-full px-3 py-2 border-2 border-primary-ink rounded-lg bg-white text-primary-ink focus:outline-none"
                 />
               </div>
+            </div>
+            
+            <div className="mt-3 space-y-1">
+              {(estSweatingDays > 0 && (estSweatingDays < 3 || estSweatingDays > 8)) && (
+                <p className="text-[10px] text-[#C65911] font-semibold">
+                  ⚠️ Sweating: Nilai di luar rentang umum (3-8 hari). Hasil prediksi mungkin kurang akurat.
+                </p>
+              )}
+              {(estDryingDays > 0 && (estDryingDays < 15 || estDryingDays > 35)) && (
+                <p className="text-[10px] text-[#C65911] font-semibold">
+                  ⚠️ Sun Drying: Nilai di luar rentang umum (15-35 hari). Hasil prediksi mungkin kurang akurat.
+                </p>
+              )}
+              {(estConditioningDays > 0 && (estConditioningDays < 45 || estConditioningDays > 90)) && (
+                <p className="text-[10px] text-[#C65911] font-semibold">
+                  ⚠️ Conditioning: Nilai di luar rentang umum (45-90 hari). Hasil prediksi mungkin kurang akurat.
+                </p>
+              )}
             </div>
           </div>
 
@@ -384,6 +409,12 @@ export default function EstimatorTab({ onSaveBatch, onSaveBatchAuto }: Estimator
                     </li>
                   ))}
                 </ul>
+              </div>
+            )}
+
+            {estResult.warningMessage && (
+              <div className="mb-4 p-3 rounded-lg bg-[#FDF2F2] border-2 border-red-200 text-[10px] leading-relaxed text-[#9B1C1C] font-semibold flex items-start gap-2">
+                <span>{estResult.warningMessage}</span>
               </div>
             )}
 

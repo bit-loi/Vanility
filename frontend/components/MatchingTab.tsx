@@ -150,6 +150,7 @@ export default function MatchingTab({ batches, lang, isBuyerMode }: MatchingTabP
     const selectedBatch = displayBatches.find(b => b.id === selectedBatchId);
     if (!selectedBatch || !selectedBatch.dbId) return;
 
+    const batchDbId = selectedBatch.dbId;
     let active = true;
     async function fetchMatches() {
       setLoading(true);
@@ -166,7 +167,7 @@ export default function MatchingTab({ batches, lang, isBuyerMode }: MatchingTabP
           headers['Authorization'] = `Bearer ${token}`;
         }
 
-        const res = await fetch(`http://127.0.0.1:8000/api/matches/${selectedBatch.dbId}?lang=${lang}`, {
+        const res = await fetch(`http://127.0.0.1:8000/api/matches/${batchDbId}?lang=${lang}`, {
           headers
         });
         if (!res.ok) throw new Error('API error matching buyers');
@@ -415,7 +416,7 @@ export default function MatchingTab({ batches, lang, isBuyerMode }: MatchingTabP
           </div>
           <div className="border-2 border-primary-ink/20 p-3 rounded-lg bg-cream-base text-[9px] font-semibold text-primary-ink/60 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#C65911]"></span>
-            {lang === 'en' ? `Low Grade: ${displayBatches.filter(b => b.grade === 'Low Grade' || b.grade === 'Grade C').length} batch(es)` : `Low Grade: ${displayBatches.filter(b => b.grade === 'Low Grade' || b.grade === 'Grade C').length} batch`}
+            {lang === 'en' ? `Grade C: ${displayBatches.filter(b => b.grade === 'Low Grade' || b.grade === 'Grade C').length} batch(es)` : `Grade C: ${displayBatches.filter(b => b.grade === 'Low Grade' || b.grade === 'Grade C').length} batch`}
           </div>
         </div>
       </div>
